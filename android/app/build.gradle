@@ -1,0 +1,122 @@
+apply plugin: 'com.android.application'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    implementation 'com.pes.materialcolorpicker:library:1.2.5'
+
+    implementation 'com.google.firebase:firebase-core:17.4.3'
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+}
+
+android {
+
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    def versionNumber = System.getenv("VERSION_CODE") ?: "1"
+    def versionLabel = System.getenv("VERSION_NAME") ?: "KT-01.00.00"
+
+    defaultConfig {
+        applicationId "com.thiagorosa.keytita"
+        versionName versionLabel
+        versionCode versionNumber.toInteger()
+    }
+
+    flavorDimensions "default"
+
+    productFlavors {
+        Dev {
+            minSdkVersion 21
+            targetSdkVersion 29
+        }
+        NonGooglePlay {
+            minSdkVersion 14
+            targetSdkVersion 29
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("KEYSTORE"))
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
+
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == 'release') {
+            variant.productFlavors.each { flavor ->
+                def destination = System.getenv("APK_STORAGE")
+                def taskName = variant.name.capitalize()
+                def taskNameTrim = taskName.replace("Release", "")
+                def assembleTaskName = "bundle"+taskName
+
+                if (tasks.findByName(assembleTaskName)) {
+                    def copyTask = tasks.create(name: "archive${taskNameTrim}", type:org.gradle.api.tasks.Copy) {
+                        description "Archive APK and proguard mapping file"
+                        from ("${buildDir}") {
+                            include "**/mapping/${flavor.name}/${variant.buildType.name}/mapping.txt"
+                            include "**/bundle/${taskName}/*.aab"
+                            exclude "**/*unaligned*"
+                        }
+                        into destination
+                        eachFile { file->
+                            if (file.name == 'mapping.txt') {
+                                file.path = "${variant.versionName}.txt"
+                            } else {
+                                file.path = "${variant.versionName}.aab"
+                            }
+                        }
+                        includeEmptyDirs = false
+                    }
+
+                    def renameTask = tasks.create(name: "rename${taskNameTrim}", type:org.gradle.api.tasks.Copy) {
+                        from "$buildDir/outputs/bundle/$taskName"
+                        into "$buildDir/outputs/bundle/$taskName"
+
+                        def filename = "${project.name}-${taskNameTrim}-${variant.buildType.name}.aab"
+
+                        rename filename, "${android.defaultConfig.versionName}.aab"
+                    }
+
+                    tasks[assembleTaskName].finalizedBy = [copyTask,renameTask]
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+}
