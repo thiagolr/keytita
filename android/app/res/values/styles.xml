@@ -65,7 +65,7 @@
     <!-- BUTTON -->
     <style name="BaseButton" parent="@android:style/TextAppearance.Medium">
         <item name="android:minWidth">0dip</item>
-        <item name="android:minHeight">0dip</item>
+        <item name="android:minHeight">@dimen/button_height</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>

@@ -154,7 +154,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
         <Button
             android:id="@+id/more2"
@@ -164,7 +164,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
         <Button
             android:id="@+id/more3"
@@ -174,7 +174,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
         <Button
             android:id="@+id/more4"
@@ -184,7 +184,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
         <Button
             android:id="@+id/more5"
@@ -194,7 +194,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
         <Button
             android:id="@+id/more6"
@@ -204,7 +204,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
         <Button
             android:id="@+id/more7"
@@ -214,7 +214,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
         <Button
             android:id="@+id/more8"
@@ -224,7 +224,7 @@
             android:layout_weight="1"
             android:background="@color/primary_light"
             android:gravity="center"
-            android:text="+" />
+            android:text="@string/create_add" />
 
     </LinearLayout>
 
@@ -259,52 +259,22 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/static_color"
+                    android:id="@+id/color_single"
                     style="@style/BaseButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/static_color" />
+                    android:text="@string/color_single" />
 
                 <Button
-                    android:id="@+id/running_color"
+                    android:id="@+id/color_random"
                     style="@style/BaseButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/running_color" />
-
-
-                <Button
-                    android:id="@+id/theater_a1l"
-                    style="@style/BaseButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/theater_color" />
-
-
-                <Button
-                    android:id="@+id/wipe_a1l"
-                    style="@style/BaseButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/wipe_color" />
-
-
-                <Button
-                    android:id="@+id/bounce_color"
-                    style="@style/BaseButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/bounce_color" />
+                    android:text="@string/color_random" />
 
             </LinearLayout>
 
@@ -315,51 +285,48 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/static_random"
+                    android:id="@+id/rainbow_full_fixed"
                     style="@style/BaseButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/static_random" />
+                    android:text="@string/rainbow_full_fixed" />
 
                 <Button
-                    android:id="@+id/running_random"
+                    android:id="@+id/rainbow_full_moving"
                     style="@style/BaseButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/running_random" />
+                    android:text="@string/rainbow_full_moving" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/theater_rainbowl"
+                    android:id="@+id/rainbow_single_shifting"
                     style="@style/BaseButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/theater_rainbow" />
-
+                    android:text="@string/rainbow_single_shifting" />
 
                 <Button
-                    android:id="@+id/rainbow_linear"
+                    android:id="@+id/rainbow_gradual_moving"
                     style="@style/BaseButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/rainbow_linear" />
-
-                <Button
-                    android:id="@+id/rainbow_cycle"
-                    style="@style/BaseButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/rainbow_cycle" />
-
+                    android:text="@string/rainbow_gradual_moving" />
 
             </LinearLayout>
 
@@ -385,30 +352,6 @@
                     android:layout_weight="4"
                     android:max="250"
                     android:progress="50" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/length_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center" />
-
-                <SeekBar
-                    android:id="@+id/length_value"
-                    style="@style/SeekBarTheme"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:max="19"
-                    android:progress="4" />
 
             </LinearLayout>
 

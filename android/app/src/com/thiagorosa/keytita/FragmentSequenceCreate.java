@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -35,25 +34,10 @@ import com.thiagorosa.keytita.common.CustomFragment;
 import com.thiagorosa.keytita.manager.PreferencesManager;
 import com.thiagorosa.keytita.model.Effect;
 
-import java.util.ArrayList;
-
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_BOUNCE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_FADE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_RAINBOW;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_RUNNING;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_SPARKLE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_STATIC;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_STROBE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_THEATER;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_TWINKLE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_WIPE;
-
 public class FragmentSequenceCreate extends CustomFragment {
 
-    private ArrayList<Effect> mEffects = new ArrayList<>();
-
-    private TextView mEffectName = null;
     private ViewLed mViewLed = null;
+    private TextView mEffectDescription = null;
 
     private Button mButtonRed = null;
     private Button mButtonGreen = null;
@@ -73,24 +57,16 @@ public class FragmentSequenceCreate extends CustomFragment {
     private Button mButtonMore7 = null;
     private Button mButtonMore8 = null;
 
-    private Button mButtonRainbowLinear = null;
-    private Button mButtonRainbowCycle = null;
-    private Button mButtonStaticColor = null;
-    private Button mButtonStaticRandom = null;
-    private Button mButtonRunningColor = null;
-    private Button mButtonRunningRandom = null;
-    private Button mButtonBounceColor = null;
-    private Button mButtonWipeA1L = null;
-    private Button mButtonTheaterA1L = null;
-    private Button mButtonTheaterRainbowL = null;
+    private Button mButtonSingleColor = null;
+    private Button mButtonRandomColor = null;
+    private Button mButtonRainbowFullFixed = null;
+    private Button mButtonRainbowFullMoving = null;
+    private Button mButtonRainbowSingleShifting = null;
+    private Button mButtonRainbowGradualMoving = null;
 
     private SeekBar mSpeedValue = null;
     private TextView mSpeedText = null;
     private int mSpeed = 0;
-
-    private SeekBar mLengthValue = null;
-    private TextView mLengthText = null;
-    private int mLength = 0;
 
     private SeekBar mBrightnessValue = null;
     private TextView mBrightnessText = null;
@@ -102,10 +78,10 @@ public class FragmentSequenceCreate extends CustomFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setup, null);
 
-        mEffectName = view.findViewById(R.id.sequence_name);
+        mEffectDescription = view.findViewById(R.id.sequence_name);
 
         mViewLed = view.findViewById(R.id.led_view);
-        mViewLed.load(mEffects);
+        mViewLed.reset();
 
         mButtonRed = view.findViewById(R.id.red);
         mButtonRed.setOnClickListener(new View.OnClickListener() {
@@ -235,94 +211,57 @@ public class FragmentSequenceCreate extends CustomFragment {
             }
         });
 
-
-        mButtonRainbowLinear = view.findViewById(R.id.rainbow_linear);
-        mButtonRainbowLinear.setOnClickListener(new View.OnClickListener() {
+        mButtonSingleColor = view.findViewById(R.id.color_single);
+        mButtonSingleColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectName.setText(R.string.rainbow_linear);
-                rainbow(4, 1);
+                mEffectDescription.setText(R.string.color_single);
+                updateSequence(new Effect(mColor, Effect.TYPE_COLOR_SINGLE, mSpeed));
             }
         });
 
-        mButtonRainbowCycle = view.findViewById(R.id.rainbow_cycle);
-        mButtonRainbowCycle.setOnClickListener(new View.OnClickListener() {
+        mButtonRandomColor = view.findViewById(R.id.color_random);
+        mButtonRandomColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectName.setText(R.string.rainbow_cycle);
-                rainbow(4, 2);
+                mEffectDescription.setText(R.string.color_random);
+                updateSequence(new Effect(mColor, Effect.TYPE_COLOR_RANDOM, mSpeed));
             }
         });
 
-        mButtonStaticColor = view.findViewById(R.id.static_color);
-        mButtonStaticColor.setOnClickListener(new View.OnClickListener() {
+        mButtonRainbowFullFixed = view.findViewById(R.id.rainbow_full_fixed);
+        mButtonRainbowFullFixed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectName.setText(R.string.static_color);
-                static2(4, 1);
+                mEffectDescription.setText(R.string.rainbow_full_fixed);
+                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_FULL_FIXED, mSpeed));
             }
         });
 
-        mButtonStaticRandom = view.findViewById(R.id.static_random);
-        mButtonStaticRandom.setOnClickListener(new View.OnClickListener() {
+        mButtonRainbowFullMoving = view.findViewById(R.id.rainbow_full_moving);
+        mButtonRainbowFullMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectName.setText(R.string.static_random);
-                static2(4, 2);
+                mEffectDescription.setText(R.string.rainbow_full_moving);
+                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_FULL_MOVING, mSpeed));
             }
         });
 
-        mButtonRunningColor = view.findViewById(R.id.running_color);
-        mButtonRunningColor.setOnClickListener(new View.OnClickListener() {
+        mButtonRainbowSingleShifting = view.findViewById(R.id.rainbow_single_shifting);
+        mButtonRainbowSingleShifting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectName.setText(R.string.running_color);
-                running(4, 1);
+                mEffectDescription.setText(R.string.rainbow_single_shifting);
+                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_SINGLE_SHIFTING, mSpeed));
             }
         });
 
-        mButtonRunningRandom = view.findViewById(R.id.running_random);
-        mButtonRunningRandom.setOnClickListener(new View.OnClickListener() {
+        mButtonRainbowGradualMoving = view.findViewById(R.id.rainbow_gradual_moving);
+        mButtonRainbowGradualMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectName.setText(R.string.running_random);
-                running(4, 2);
-            }
-        });
-
-        mButtonBounceColor = view.findViewById(R.id.bounce_color);
-        mButtonBounceColor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEffectName.setText(R.string.bounce_color);
-                bounce(4, 1);
-            }
-        });
-
-        mButtonWipeA1L = view.findViewById(R.id.wipe_a1l);
-        mButtonWipeA1L.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEffectName.setText(R.string.wipe_color);
-                wipe(1, 0);
-            }
-        });
-
-        mButtonTheaterA1L = view.findViewById(R.id.theater_a1l);
-        mButtonTheaterA1L.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEffectName.setText(R.string.theater_color);
-                theater(1, 0);
-            }
-        });
-
-        mButtonTheaterRainbowL = view.findViewById(R.id.theater_rainbowl);
-        mButtonTheaterRainbowL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEffectName.setText(R.string.theater_rainbow);
-                theater(4, 2);
+                mEffectDescription.setText(R.string.rainbow_gradual_moving);
+                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_GRADUAL_MOVING, mSpeed));
             }
         });
 
@@ -346,28 +285,6 @@ public class FragmentSequenceCreate extends CustomFragment {
         mSpeedText = view.findViewById(R.id.speed_text);
         mSpeedText.setText(mSpeedValue.getProgress() + getText(R.string.create_milliseconds).toString());
         mSpeed = mSpeedValue.getProgress();
-
-        mLengthValue = view.findViewById(R.id.length_value);
-        mLengthValue.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress += 1;
-                mLengthText.setText(progress + " " + getText(R.string.create_leds).toString());
-                mLength = progress;
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        mLengthText = view.findViewById(R.id.length_text);
-        mLength = mLengthValue.getProgress() + 1;
-        mLengthText.setText(mLength + " " + getText(R.string.create_leds).toString());
 
         mBrightnessValue = view.findViewById(R.id.brightness_value);
         mBrightnessValue.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -419,9 +336,8 @@ public class FragmentSequenceCreate extends CustomFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.clear) {
             Effect.clear();
-            mEffects.clear();
-            mEffectName.setText("");
-            updateSequence();
+            mEffectDescription.setText("");
+            mViewLed.clear();
             return true;
         } else if (item.getItemId() == R.id.reset) {
             PreferencesManager.getInstance().setColor(1, Color.TRANSPARENT);
@@ -459,30 +375,11 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonMore7.setText(PreferencesManager.getInstance().getColor(7) == 0 ? "+" : "");
         mButtonMore8.setText(PreferencesManager.getInstance().getColor(8) == 0 ? "+" : "");
 
-        mButtonStaticColor.setTextColor(mColor);
-        mButtonRunningColor.setTextColor(mColor);
-
-        mButtonBounceColor.setTextColor(mColor);
-
-        mButtonWipeA1L.setTextColor(mColor);
-        mButtonTheaterA1L.setTextColor(mColor);
+        mButtonSingleColor.setTextColor(mColor);
     }
 
-    private void updateSequence() {
-        // mListEffect.removeAllViews();
-
-        for (Effect effect : mEffects) {
-            TextView tv = new TextView(getContext());
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.leftMargin = 10;
-            lp.rightMargin = 10;
-            tv.setLayoutParams(lp);
-            tv.setText(effect.toString());
-            tv.setTextColor(effect.getColor());
-
-            // mListEffect.addView(tv);
-        }
-
+    private void updateSequence(Effect effect) {
+        mViewLed.load(effect);
         if (getActivity() != null) {
             getActivity().invalidateOptionsMenu();
         }
@@ -493,7 +390,7 @@ public class FragmentSequenceCreate extends CustomFragment {
             final ColorPicker cp = new ColorPicker(getActivity(), Color.red(PreferencesManager.getInstance().getColor(index)), Color.green(PreferencesManager.getInstance().getColor(index)), Color.blue(PreferencesManager.getInstance().getColor(index)));
             cp.show();
 
-            Button ok = (Button) cp.findViewById(R.id.okColorButton);
+            Button ok = cp.findViewById(R.id.okColorButton);
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -507,56 +404,6 @@ public class FragmentSequenceCreate extends CustomFragment {
         } else {
             updateColors(PreferencesManager.getInstance().getColor(index));
         }
-    }
-
-    private void wipe(int index, int direction) {
-        mEffects.add(new Effect(mColor, TYPE_WIPE, index, direction, mSpeed, 0));
-        updateSequence();
-    }
-
-    private void theater(int index, int direction) {
-        mEffects.add(new Effect(mColor, TYPE_THEATER, index, direction, mSpeed, mLength));
-        updateSequence();
-    }
-
-    private void rainbow(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_RAINBOW, index, type, mSpeed, 0));
-        updateSequence();
-    }
-
-    private void static2(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_STATIC, index, type, mSpeed, 0));
-        updateSequence();
-    }
-
-    private void running(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_RUNNING, index, type, mSpeed, 0));
-        updateSequence();
-    }
-
-    private void fade(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_FADE, index, type, mSpeed, 0));
-        updateSequence();
-    }
-
-    private void twinkle(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_TWINKLE, index, type, mSpeed, mLength));
-        updateSequence();
-    }
-
-    private void strobe(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_STROBE, index, type, mSpeed, 0));
-        updateSequence();
-    }
-
-    private void sparkle(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_SPARKLE, index, type, mSpeed, mLength));
-        updateSequence();
-    }
-
-    private void bounce(int index, int type) {
-        mEffects.add(new Effect(mColor, TYPE_BOUNCE, index, type, mSpeed, mLength));
-        updateSequence();
     }
 
 }

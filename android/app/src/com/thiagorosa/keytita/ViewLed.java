@@ -23,22 +23,12 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.thiagorosa.keytita.common.Logger;
 import com.thiagorosa.keytita.model.Effect;
 import com.thiagorosa.keytita.model.EffectLogic;
 import com.thiagorosa.keytita.model.Led;
 
 import java.util.ArrayList;
-
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_BOUNCE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_FADE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_RAINBOW;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_RUNNING;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_SPARKLE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_STATIC;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_STROBE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_THEATER;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_TWINKLE;
-import static com.thiagorosa.keytita.model.EffectLogic.TYPE_WIPE;
 
 public class ViewLed extends View {
 
@@ -47,199 +37,70 @@ public class ViewLed extends View {
     private static final int COLOR_BACKGROUND = 0xFFCCCCCC;
 
     private ArrayList<Led> mLeds = new ArrayList<>();
-    private ArrayList<Effect> mSequences = null;
-    private EffectLogic mEffectLogic = null;
-    private Thread mThread = null;
+    private Effect mEffect = null;
     private Paint mPaintLed = null;
+
     private boolean isRunning = false;
 
     private int mCellWidth = 0;
     private int mCellHeight = 0;
     private int mCellMargin = 0;
-    private int mLedDiameter = 0;
+    private int mLedWidth = 0;
 
     /*******************************************************************************************
      *******************************************************************************************/
 
     public ViewLed(Context context) {
         super(context);
+        init();
     }
 
     public ViewLed(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public ViewLed(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     public ViewLed(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init();
     }
 
-    /*******************************************************************************************
-     *******************************************************************************************/
-
-    public void load(ArrayList<Effect> sequence) {
-        mEffectLogic = new EffectLogic(mLeds);
-        mSequences = sequence;
-
-        mLeds.clear();
+    private void init() {
         for (int i = 0; i < NUM_LEDS; i++) {
             mLeds.add(new Led(Color.WHITE));
         }
+    }
 
-        mPaintLed = new Paint(Paint.ANTI_ALIAS_FLAG);
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        isRunning = false;
+    }
 
-        mThread = new Thread(new Runnable() {
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        isRunning = true;
+
+        Thread mThread = new Thread(new Runnable() {
             @Override
             public void run() {
-
-                boolean isDouble = false;
-                int startIndex = 0;
-                int endIndex = 0;
-                int direction = 0;
-
-                isRunning = true;
+                Logger.EFFECT("Thread started!");
                 while (isRunning) {
-                    try {
-                        if (mSequences.size() == 0) {
-                            for (int i = 0; i < NUM_LEDS; i++) {
-                                mLeds.get(i).setColor(Color.WHITE);
-                            }
+                    if (!show()) {
+                        try {
+                            reset();
+                            Thread.sleep(500);
+                        } catch (Exception ignored) {
                         }
-
-                        for (Effect sequence : mSequences) {
-                            switch (sequence.getIndex()) {
-                                case 1:
-                                case 2:
-                                case 3:
-                                    isDouble = false;
-                                    break;
-                                case 4:
-                                    isDouble = true;
-                                    break;
-                            }
-
-                            startIndex = getStartIndex();
-                            endIndex = getEndIndex();
-                            direction = getDirection();
-
-                            switch (sequence.getEffect()) {
-                                case TYPE_WIPE:
-                                    if (isDouble) {
-                                        mEffectLogic.wipeColorDouble(sequence.getColor(), getStartIndex(), getEndIndex(), getStartIndex(), getEndIndex(), getStartIndex(), getEndIndex(), getDirection(), getDirection(), getDirection(), sequence.getSpeed());
-                                    } else {
-                                        mEffectLogic.wipeColor(sequence.getColor(), startIndex, endIndex, direction, sequence.getSpeed());
-                                    }
-                                    break;
-                                case TYPE_THEATER:
-                                    if (isDouble && sequence.getType() <= 1) {
-                                        mEffectLogic.theaterColorDouble(sequence.getColor(), getStartIndex(), getEndIndex(), getStartIndex(), getEndIndex(), getStartIndex(), getEndIndex(), getDirection(), getDirection(), getDirection(), sequence.getSpeed(), sequence.getLength(), sequence.getRepeat());
-                                    } else {
-                                        switch (sequence.getType()) {
-                                            case 0:
-                                            case 1:
-                                                mEffectLogic.theaterColor(sequence.getColor(), startIndex, endIndex, direction, sequence.getSpeed(), sequence.getLength(), sequence.getRepeat());
-                                                break;
-                                            case 2:
-                                            case 3:
-                                                mEffectLogic.theaterRainbow(startIndex, endIndex, direction, sequence.getSpeed(), sequence.getLength());
-                                                break;
-                                        }
-                                    }
-                                    break;
-                                case TYPE_RAINBOW:
-                                    switch (sequence.getType()) {
-                                        case 1:
-                                            mEffectLogic.rainbowLinear(startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                        case 2:
-                                            mEffectLogic.rainbowCycle(startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                    }
-                                    break;
-                                case TYPE_STATIC:
-                                    switch (sequence.getType()) {
-                                        case 1:
-                                            mEffectLogic.staticColor(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                        case 2:
-                                            mEffectLogic.staticRandom(startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                    }
-                                    break;
-                                case TYPE_TWINKLE:
-                                    switch (sequence.getType()) {
-                                        case 1:
-                                            mEffectLogic.twinkleColor(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getLength(), sequence.getType() == 1 ? 1 : 0, sequence.getRepeat());
-                                            break;
-                                        case 2:
-                                            mEffectLogic.twinkleColor(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getLength(), sequence.getType() == 1 ? 1 : 0, sequence.getRepeat());
-                                            break;
-                                        case 3:
-                                            mEffectLogic.twinkleRandom(startIndex, endIndex, sequence.getSpeed(), sequence.getLength(), sequence.getType() == 3 ? 1 : 0, sequence.getRepeat());
-                                            break;
-                                        case 4:
-                                            mEffectLogic.twinkleRandom(startIndex, endIndex, sequence.getSpeed(), sequence.getLength(), sequence.getType() == 3 ? 1 : 0, sequence.getRepeat());
-                                            break;
-                                    }
-                                    break;
-                                case TYPE_FADE:
-                                    switch (sequence.getType()) {
-                                        case 1:
-                                            mEffectLogic.fadeInColor(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                        case 2:
-                                            mEffectLogic.fadeOutColor(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                    }
-                                    break;
-                                case TYPE_STROBE:
-                                    switch (sequence.getType()) {
-                                        case 1:
-                                            mEffectLogic.strobeColorConstant(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                        case 2:
-                                            mEffectLogic.strobeColorCrazy(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                        case 3:
-                                            mEffectLogic.strobeRandomConstant(startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                        case 4:
-                                            mEffectLogic.strobeRandomCrazy(startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                    }
-                                    break;
-                                case TYPE_SPARKLE:
-                                    switch (sequence.getType()) {
-                                        case 1:
-                                            mEffectLogic.sparkleColorDark(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getLength(), sequence.getRepeat());
-                                            break;
-                                        case 2:
-                                            mEffectLogic.sparkleColorLight(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getLength(), sequence.getRepeat());
-                                            break;
-                                    }
-                                    break;
-                                case TYPE_BOUNCE:
-                                    mEffectLogic.bounceColor(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getLength(), sequence.getRepeat());
-                                    break;
-                                case TYPE_RUNNING:
-                                    switch (sequence.getType()) {
-                                        case 1:
-                                            mEffectLogic.runningColor(sequence.getColor(), startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                        case 2:
-                                            mEffectLogic.runningRandom(startIndex, endIndex, sequence.getSpeed(), sequence.getRepeat());
-                                            break;
-                                    }
-                                    break;
-                            }
-                        }
-
-                    } catch (Exception ignored) {
                     }
                 }
+                Logger.EFFECT("Thread ended!");
             }
         });
         mThread.start();
@@ -251,44 +112,114 @@ public class ViewLed extends View {
 
         canvas.drawColor(COLOR_BACKGROUND);
 
-        if (getWidth() == 0 || getHeight() == 0 || mSequences == null) {
+        if (getWidth() == 0 || getHeight() == 0) {
             invalidate();
             return;
         }
 
-        if (mCellWidth == 0 || mCellHeight == 0 || mLedDiameter == 0) {
+        if (mCellWidth == 0 || mCellHeight == 0 || mLedWidth == 0) {
             mCellWidth = getWidth();
             mCellHeight = getHeight();
-            mLedDiameter = mCellWidth / (NUM_LEDS + 2);
-            mCellMargin = mLedDiameter;
+            mLedWidth = mCellWidth / (NUM_LEDS + 2);
+            mCellMargin = mLedWidth;
         }
 
         for (int l = 0; l < NUM_LEDS; l++) {
             mPaintLed.setColor(Color.WHITE);
-            canvas.drawRect(+mCellMargin + l * mLedDiameter, mCellHeight / 2 - +mLedDiameter * 2, +mCellMargin + l * mLedDiameter + mLedDiameter / 2, mCellHeight / 2 + mLedDiameter * 2, mPaintLed);
+            canvas.drawRect(+mCellMargin + l * mLedWidth, mCellHeight / 2 - mLedWidth * 2, +mCellMargin + l * mLedWidth + mLedWidth / 2, mCellHeight / 2 + mLedWidth * 2, mPaintLed);
             mPaintLed.setColor(mLeds.get(l).getColor());
-            canvas.drawRect(mCellMargin + l * mLedDiameter, mCellHeight / 2 - +mLedDiameter * 2, mCellMargin + l * mLedDiameter + mLedDiameter / 2, mCellHeight / 2 + mLedDiameter * 2, mPaintLed);
+            canvas.drawRect(mCellMargin + l * mLedWidth, mCellHeight / 2 - mLedWidth * 2, mCellMargin + l * mLedWidth + mLedWidth / 2, mCellHeight / 2 + mLedWidth * 2, mPaintLed);
         }
 
         invalidate();
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        isRunning = false;
+    /*******************************************************************************************
+     *******************************************************************************************/
+
+    public void reset() {
+        Logger.EFFECT("reset()");
+        for (int i = 0; i < NUM_LEDS; i++) {
+            mLeds.get(i).setColor(Color.WHITE);
+        }
+
+        mPaintLed = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaintLed.setColor(Color.WHITE);
+        invalidate();
     }
 
-    private int getStartIndex() {
-        return 0;
+    public void clear() {
+        Logger.EFFECT("clear()");
+        mEffect = null;
+        EffectLogic.disable();
     }
 
-    private int getEndIndex() {
-        return NUM_LEDS;
+    public void load(Effect effect) {
+        clear();
+        reset();
+
+        mEffect = effect;
+        EffectLogic.disable();
+
+        try {
+            Thread.sleep(500);
+        } catch (Exception ignored) {
+        }
+
+        EffectLogic.enable();
+
+        invalidate();
     }
 
-    private int getDirection() {
-        return 1;
+    private boolean show() {
+        try {
+            if (mEffect == null) {
+                Logger.EFFECT("show() effect is null");
+                return false;
+            }
+
+            switch (mEffect.getType()) {
+                case Effect.TYPE_COLOR_SINGLE:
+                    if (!EffectLogic.colorSingle(mLeds, mEffect)) {
+                        return false;
+                    }
+                    break;
+                case Effect.TYPE_COLOR_RANDOM:
+                    if (!EffectLogic.colorRandom(mLeds, mEffect)) {
+                        return false;
+                    }
+                    break;
+                case Effect.TYPE_RAINBOW_FULL_FIXED:
+                    if (!EffectLogic.rainbowCompleteStatic(mLeds, mEffect)) {
+                        return false;
+                    }
+                    break;
+                case Effect.TYPE_RAINBOW_FULL_MOVING:
+                    if (!EffectLogic.rainbowCompleteMoving(mLeds, mEffect)) {
+                        return false;
+                    }
+                    break;
+                case Effect.TYPE_RAINBOW_SINGLE_SHIFTING:
+                    if (!EffectLogic.rainbowSingleColorShifting(mLeds, mEffect)) {
+                        return false;
+                    }
+                    break;
+                case Effect.TYPE_RAINBOW_GRADUAL_MOVING:
+                    if (!EffectLogic.rainbowGradualMoving(mLeds, mEffect)) {
+                        return false;
+                    }
+                    break;
+            }
+        } catch (Exception ignored) {
+            return false;
+        }
+
+        try {
+            Thread.sleep(10);
+        } catch (Exception ignored) {
+        }
+
+        return true;
     }
 
 }

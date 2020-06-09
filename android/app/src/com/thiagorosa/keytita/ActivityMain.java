@@ -17,6 +17,7 @@
 package com.thiagorosa.keytita;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -75,7 +77,7 @@ public class ActivityMain extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-               /* final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("This app needs location access");
                 builder.setMessage("Please grant location access so this app can detect beacons.");
                 builder.setPositiveButton(android.R.string.ok, null);
@@ -85,7 +87,7 @@ public class ActivityMain extends AppCompatActivity {
 
                     }
                 });
-                builder.show();*/
+                builder.show();
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
@@ -104,7 +106,7 @@ public class ActivityMain extends AppCompatActivity {
             transaction.commitAllowingStateLoss();
 
 
-            /*if (!TextUtils.isEmpty(PreferencesManager.getInstance().getDeviceMAC())) {
+            if (!TextUtils.isEmpty(PreferencesManager.getInstance().getDeviceMAC())) {
                 Bundle args = new Bundle();
                 args.putString(FragmentDeviceList.EXTRA_MAC, PreferencesManager.getInstance().getDeviceMAC());
 
@@ -115,7 +117,7 @@ public class ActivityMain extends AppCompatActivity {
                 transactionDevice.replace(R.id.fragment, fragmentDevice, "fragment");
                 transactionDevice.addToBackStack(null);
                 transactionDevice.commitAllowingStateLoss();
-            }*/
+            }
         }
     }
 

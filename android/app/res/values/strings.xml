@@ -47,19 +47,15 @@
     <string name="create_leds">leds</string>
     <string name="create_repeat">x</string>
     <string name="create_percentage">%</string>
+    <string name="create_add">+</string>
     <string name="create_effect_none">no color/effect selected</string>
 
     <!-- EFFECTS -->
-    <string name="rainbow_linear">RAINBOW LINEAR</string>
-    <string name="rainbow_cycle">RAINBOW CYCLE</string>
-    <string name="static_color">STATIC COLOR</string>
-    <string name="static_random">STATIC RANDOM</string>
-    <string name="bounce_color">BOUNCE COLOR</string>
-    <string name="running_color">RUNNING COLOR</string>
-    <string name="running_random">RUNNING RANDOM</string>
-    <string name="wipe_color">WIPE COLOR</string>
-    <string name="theater_color">THEATER COLOR</string>
-    <string name="theater_rainbow">THEATER RAINBOW</string>
-
+    <string name="color_single">SINGLE COLOR</string>
+    <string name="color_random">RANDOM COLOR</string>
+    <string name="rainbow_full_fixed">COMPLETE\nSTATIC RAINBOW</string>
+    <string name="rainbow_full_moving">COMPLETE\nMOVING RAINBOW</string>
+    <string name="rainbow_single_shifting">SINGLE COLOR\nSHIFTING RAINBOW</string>
+    <string name="rainbow_gradual_moving">GRADUAL COLOR\nMOVING RAINBOW</string>
 
 </resources>

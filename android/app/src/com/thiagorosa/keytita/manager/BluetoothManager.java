@@ -37,9 +37,9 @@ public class BluetoothManager {
 
     // UUID
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final int SEND_DELAY = 0;
     public static final int REQUEST_ENABLE_BLUETOOTH = 1;
 
-    // DEVICE A
     private BluetoothDevice mDevice = null;
     private BluetoothSocket mDeviceSocket = null;
     private OutputStream mOutputStream = null;
@@ -201,26 +201,23 @@ public class BluetoothManager {
     /*******************************************************************************************
      *******************************************************************************************/
 
-    public boolean write(int type, int param1, int param2, int param3, int param4, int param5) {
+    public void write(int type, int red, int green, int blue, int speed) {
         try {
-            Logger.BT("WRITE: " + type + "," + param1 + "," + param2 + "," + param3 + "," + param4 + "," + param5);
-
             if (isConnected) {
-                mOutputStream.write(type);
-                mOutputStream.write(param1);
-                mOutputStream.write(param2);
-                mOutputStream.write(param3);
-                mOutputStream.write(param4);
-                mOutputStream.write(param5);
+                String data = type + "," + red + "," + green + "," + blue + "," + speed + "#";
+                Logger.BT("WRITE: " + data);
+
+                byte[] dataBytes = data.getBytes();
+                for (int b = 0; b < dataBytes.length; b++) {
+                    mOutputStream.write(dataBytes[b]);
+                    Thread.sleep(SEND_DELAY);
+                }
             }
         } catch (IOException e) {
             Logger.BT("ERROR: failed to write (" + e.getMessage() + ")");
-            return false;
         } catch (Exception e) {
             Logger.BT("ERROR: " + e.getMessage());
-            return false;
         }
-        return true;
     }
 
 }
