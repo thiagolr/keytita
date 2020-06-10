@@ -33,20 +33,12 @@ import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.thiagorosa.keytita.common.CustomFragment;
 import com.thiagorosa.keytita.manager.PreferencesManager;
 import com.thiagorosa.keytita.model.Effect;
+import com.thiagorosa.keytita.model.EffectLogic;
 
 public class FragmentSequenceCreate extends CustomFragment {
 
     private ViewLed mViewLed = null;
-    private TextView mEffectDescription = null;
-
-    private Button mButtonRed = null;
-    private Button mButtonGreen = null;
-    private Button mButtonBlue = null;
-    private Button mButtonYellow = null;
-    private Button mButtonMagenta = null;
-    private Button mButtonCyan = null;
-    private Button mButtonWhite = null;
-    private Button mButtonBlack = null;
+    private TextView mDescription = null;
 
     private Button mButtonMore1 = null;
     private Button mButtonMore2 = null;
@@ -57,13 +49,6 @@ public class FragmentSequenceCreate extends CustomFragment {
     private Button mButtonMore7 = null;
     private Button mButtonMore8 = null;
 
-    private Button mButtonSingleColor = null;
-    private Button mButtonRandomColor = null;
-    private Button mButtonRainbowFullFixed = null;
-    private Button mButtonRainbowFullMoving = null;
-    private Button mButtonRainbowSingleShifting = null;
-    private Button mButtonRainbowGradualMoving = null;
-
     private SeekBar mSpeedValue = null;
     private TextView mSpeedText = null;
     private int mSpeed = 0;
@@ -72,78 +57,76 @@ public class FragmentSequenceCreate extends CustomFragment {
     private TextView mBrightnessText = null;
     private int mBrightness = 0;
 
-    private int mColor = Color.WHITE;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.setup, null);
+        View view = inflater.inflate(R.layout.control, null);
 
-        mEffectDescription = view.findViewById(R.id.sequence_name);
+        mDescription = view.findViewById(R.id.sequence_name);
 
         mViewLed = view.findViewById(R.id.led_view);
         mViewLed.reset();
 
-        mButtonRed = view.findViewById(R.id.red);
+        Button mButtonRed = view.findViewById(R.id.red);
         mButtonRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.RED);
+                updateColor(Color.RED);
             }
         });
 
-        mButtonGreen = view.findViewById(R.id.green);
+        Button mButtonGreen = view.findViewById(R.id.green);
         mButtonGreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.GREEN);
+                updateColor(Color.GREEN);
             }
         });
 
-        mButtonBlue = view.findViewById(R.id.blue);
+        Button mButtonBlue = view.findViewById(R.id.blue);
         mButtonBlue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.BLUE);
+                updateColor(Color.BLUE);
             }
         });
 
-        mButtonYellow = view.findViewById(R.id.yellow);
+        Button mButtonYellow = view.findViewById(R.id.yellow);
         mButtonYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.YELLOW);
+                updateColor(Color.YELLOW);
             }
         });
 
-        mButtonMagenta = view.findViewById(R.id.magenta);
+        Button mButtonMagenta = view.findViewById(R.id.magenta);
         mButtonMagenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.MAGENTA);
+                updateColor(Color.MAGENTA);
             }
         });
 
-        mButtonCyan = view.findViewById(R.id.cyan);
+        Button mButtonCyan = view.findViewById(R.id.cyan);
         mButtonCyan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.CYAN);
+                updateColor(Color.CYAN);
             }
         });
 
-        mButtonWhite = view.findViewById(R.id.white);
+        Button mButtonWhite = view.findViewById(R.id.white);
         mButtonWhite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.WHITE);
+                updateColor(Color.WHITE);
             }
         });
 
-        mButtonBlack = view.findViewById(R.id.black);
+        Button mButtonBlack = view.findViewById(R.id.black);
         mButtonBlack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateColors(Color.BLACK);
+                updateColor(Color.BLACK);
             }
         });
 
@@ -211,57 +194,48 @@ public class FragmentSequenceCreate extends CustomFragment {
             }
         });
 
-        mButtonSingleColor = view.findViewById(R.id.color_single);
-        mButtonSingleColor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEffectDescription.setText(R.string.color_single);
-                updateSequence(new Effect(mColor, Effect.TYPE_COLOR_SINGLE, mSpeed));
-            }
-        });
-
-        mButtonRandomColor = view.findViewById(R.id.color_random);
+        Button mButtonRandomColor = view.findViewById(R.id.color_random);
         mButtonRandomColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectDescription.setText(R.string.color_random);
-                updateSequence(new Effect(mColor, Effect.TYPE_COLOR_RANDOM, mSpeed));
+                mDescription.setText(R.string.color_random);
+                updateSequence(new Effect(Effect.TYPE_COLOR_RANDOM));
             }
         });
 
-        mButtonRainbowFullFixed = view.findViewById(R.id.rainbow_full_fixed);
+        Button mButtonRainbowFullFixed = view.findViewById(R.id.rainbow_full_fixed);
         mButtonRainbowFullFixed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectDescription.setText(R.string.rainbow_full_fixed);
-                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_FULL_FIXED, mSpeed));
+                mDescription.setText(R.string.rainbow_full_fixed);
+                updateSequence(new Effect(Effect.TYPE_RAINBOW_FULL_FIXED));
             }
         });
 
-        mButtonRainbowFullMoving = view.findViewById(R.id.rainbow_full_moving);
+        Button mButtonRainbowFullMoving = view.findViewById(R.id.rainbow_full_moving);
         mButtonRainbowFullMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectDescription.setText(R.string.rainbow_full_moving);
-                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_FULL_MOVING, mSpeed));
+                mDescription.setText(R.string.rainbow_full_moving);
+                updateSequence(new Effect(Effect.TYPE_RAINBOW_FULL_MOVING));
             }
         });
 
-        mButtonRainbowSingleShifting = view.findViewById(R.id.rainbow_single_shifting);
+        Button mButtonRainbowSingleShifting = view.findViewById(R.id.rainbow_single_shifting);
         mButtonRainbowSingleShifting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectDescription.setText(R.string.rainbow_single_shifting);
-                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_SINGLE_SHIFTING, mSpeed));
+                mDescription.setText(R.string.rainbow_single_shifting);
+                updateSequence(new Effect(Effect.TYPE_RAINBOW_SINGLE_SHIFTING));
             }
         });
 
-        mButtonRainbowGradualMoving = view.findViewById(R.id.rainbow_gradual_moving);
+        Button mButtonRainbowGradualMoving = view.findViewById(R.id.rainbow_gradual_moving);
         mButtonRainbowGradualMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEffectDescription.setText(R.string.rainbow_gradual_moving);
-                updateSequence(new Effect(mColor, Effect.TYPE_RAINBOW_GRADUAL_MOVING, mSpeed));
+                mDescription.setText(R.string.rainbow_gradual_moving);
+                updateSequence(new Effect(Effect.TYPE_RAINBOW_GRADUAL_MOVING));
             }
         });
 
@@ -279,6 +253,8 @@ public class FragmentSequenceCreate extends CustomFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                Effect.speed(mSpeed);
+                EffectLogic.SPEED = mSpeed;
             }
         });
 
@@ -305,8 +281,8 @@ public class FragmentSequenceCreate extends CustomFragment {
         });
 
         mBrightnessText = view.findViewById(R.id.brightness_text);
+        mBrightnessText.setText(mBrightnessValue.getProgress() + getText(R.string.create_percentage).toString());
         mBrightness = mBrightnessValue.getProgress();
-        mBrightnessText.setText(mBrightness + getText(R.string.create_percentage).toString());
 
         setHasOptionsMenu(true);
 
@@ -321,9 +297,29 @@ public class FragmentSequenceCreate extends CustomFragment {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(null);
 
-        update(R.string.setup_title, true);
+        update(R.string.app_title, true);
+        updateColors();
 
-        updateColors(mColor);
+        mBrightness = mBrightnessValue.getProgress();
+        mSpeed = mSpeedValue.getProgress();
+        EffectLogic.SPEED = mSpeed;
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Effect.clear();
+                    Thread.sleep(500);
+
+                    Effect.speed(mSpeed);
+                    Thread.sleep(500);
+
+                    Effect.brightness(mBrightness);
+                } catch (Exception ignored) {
+                }
+            }
+        });
+        thread.start();
     }
 
     @Override
@@ -336,7 +332,7 @@ public class FragmentSequenceCreate extends CustomFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.clear) {
             Effect.clear();
-            mEffectDescription.setText("");
+            mDescription.setText("");
             mViewLed.clear();
             return true;
         } else if (item.getItemId() == R.id.reset) {
@@ -348,15 +344,17 @@ public class FragmentSequenceCreate extends CustomFragment {
             PreferencesManager.getInstance().setColor(6, Color.TRANSPARENT);
             PreferencesManager.getInstance().setColor(7, Color.TRANSPARENT);
             PreferencesManager.getInstance().setColor(8, Color.TRANSPARENT);
-            updateColors(Color.WHITE);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateColors(int color) {
-        mColor = color;
+    private void updateColor(int color) {
+        mDescription.setText(R.string.color_single);
+        updateSequence(new Effect(Effect.TYPE_COLOR, color));
+    }
 
+    private void updateColors() {
         mButtonMore1.setBackgroundColor(PreferencesManager.getInstance().getColor(1));
         mButtonMore2.setBackgroundColor(PreferencesManager.getInstance().getColor(2));
         mButtonMore3.setBackgroundColor(PreferencesManager.getInstance().getColor(3));
@@ -374,8 +372,6 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonMore6.setText(PreferencesManager.getInstance().getColor(6) == 0 ? "+" : "");
         mButtonMore7.setText(PreferencesManager.getInstance().getColor(7) == 0 ? "+" : "");
         mButtonMore8.setText(PreferencesManager.getInstance().getColor(8) == 0 ? "+" : "");
-
-        mButtonSingleColor.setTextColor(mColor);
     }
 
     private void updateSequence(Effect effect) {
@@ -398,11 +394,11 @@ public class FragmentSequenceCreate extends CustomFragment {
                     PreferencesManager.getInstance().setColor(index, color);
                     cp.dismiss();
 
-                    updateColors(color);
+                    updateColor(color);
                 }
             });
         } else {
-            updateColors(PreferencesManager.getInstance().getColor(index));
+            updateColor(PreferencesManager.getInstance().getColor(index));
         }
     }
 

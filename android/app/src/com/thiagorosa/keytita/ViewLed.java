@@ -87,7 +87,7 @@ public class ViewLed extends View {
         super.onAttachedToWindow();
         isRunning = true;
 
-        Thread mThread = new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Logger.EFFECT("Thread started!");
@@ -103,7 +103,7 @@ public class ViewLed extends View {
                 Logger.EFFECT("Thread ended!");
             }
         });
-        mThread.start();
+        thread.start();
     }
 
     @Override
@@ -179,7 +179,7 @@ public class ViewLed extends View {
             }
 
             switch (mEffect.getType()) {
-                case Effect.TYPE_COLOR_SINGLE:
+                case Effect.TYPE_COLOR:
                     if (!EffectLogic.colorSingle(mLeds, mEffect)) {
                         return false;
                     }

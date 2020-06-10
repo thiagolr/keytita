@@ -105,8 +105,14 @@ public class ActivityMain extends AppCompatActivity {
             transaction.addToBackStack(null);
             transaction.commitAllowingStateLoss();
 
-
             if (!TextUtils.isEmpty(PreferencesManager.getInstance().getDeviceMAC())) {
+                Fragment fragmentControl = new FragmentSequenceCreate();
+                FragmentTransaction transactionControl = getSupportFragmentManager().beginTransaction();
+                transactionControl.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);
+                transactionControl.replace(R.id.fragment, fragmentControl, "fragment");
+                transactionControl.addToBackStack(null);
+                transactionControl.commitAllowingStateLoss();
+
                 Bundle args = new Bundle();
                 args.putString(FragmentDeviceList.EXTRA_MAC, PreferencesManager.getInstance().getDeviceMAC());
 

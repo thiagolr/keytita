@@ -201,10 +201,21 @@ public class BluetoothManager {
     /*******************************************************************************************
      *******************************************************************************************/
 
-    public void write(int type, int red, int green, int blue, int speed) {
+    public void write(int type) {
+        write(type + "#");
+    }
+
+    public void write(int type, int value) {
+        write(type + "," + value + "#");
+    }
+
+    public void write(int type, int red, int green, int blue) {
+        write(type + "," + red + "," + green + "," + blue + "#");
+    }
+
+    private void write(String data) {
         try {
             if (isConnected) {
-                String data = type + "," + red + "," + green + "," + blue + "," + speed + "#";
                 Logger.BT("WRITE: " + data);
 
                 byte[] dataBytes = data.getBytes();

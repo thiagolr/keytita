@@ -22,54 +22,60 @@ import com.thiagorosa.keytita.manager.BluetoothManager;
 
 public class Effect {
 
-    public static final int TYPE_CLEAR = 0;
-    public static final int TYPE_BRIGHTNESS = 1;
+    private static final int TYPE_CLEAR = 0;
+    public static final int TYPE_COLOR = 1;
+    private static final int TYPE_SPEED = 2;
+    private static final int TYPE_BRIGHTNESS = 3;
 
-    public static final int TYPE_COLOR_SINGLE = 11;
-    public static final int TYPE_COLOR_RANDOM = 12;
-    public static final int TYPE_RAINBOW_FULL_FIXED = 13;
-    public static final int TYPE_RAINBOW_FULL_MOVING = 14;
-    public static final int TYPE_RAINBOW_SINGLE_SHIFTING = 15;
-    public static final int TYPE_RAINBOW_GRADUAL_MOVING = 16;
+    public static final int TYPE_COLOR_RANDOM = 11;
+    public static final int TYPE_RAINBOW_FULL_FIXED = 12;
+    public static final int TYPE_RAINBOW_FULL_MOVING = 13;
+    public static final int TYPE_RAINBOW_SINGLE_SHIFTING = 14;
+    public static final int TYPE_RAINBOW_GRADUAL_MOVING = 15;
 
-    private int mColor;
     private int mType;
-    private int mSpeed;
+    private int mColor;
 
-    public Effect(int color, int type, int speed) {
-        mColor = color;
+    public Effect(int type) {
         mType = type;
-        mSpeed = speed;
+        type();
+    }
 
-        show();
+    public Effect(int type, int color) {
+        mType = type;
+        mColor = color;
+        color();
     }
 
     public int getType() {
         return mType;
     }
 
-    public int getSpeed() {
-        return mSpeed;
-    }
-
     public int getColor() {
         return mColor;
     }
 
-    public void show() {
-        BluetoothManager.getInstance().write(mType, Color.red(mColor), Color.green(mColor), Color.blue(mColor), mSpeed);
+    private void type() {
+        BluetoothManager.getInstance().write(mType);
+    }
+
+    public void color() {
+        BluetoothManager.getInstance().write(mType, Color.red(mColor), Color.green(mColor), Color.blue(mColor));
     }
 
     public static void clear() {
-        BluetoothManager.getInstance().write(TYPE_CLEAR, 0, 0, 0, 0);
+        BluetoothManager.getInstance().write(TYPE_CLEAR);
+    }
+
+    public static void speed(int value) {
+        BluetoothManager.getInstance().write(TYPE_SPEED, value);
     }
 
     public static void brightness(int value) {
         double a = 9.7758463166360387E-01;
         double b = 5.5498961535023345E-02;
         double result = Math.floor((a * Math.exp(b * value) + .5)) - 1;
-
-        BluetoothManager.getInstance().write(TYPE_BRIGHTNESS, (int) result, 0, 0, 0);
+        BluetoothManager.getInstance().write(TYPE_BRIGHTNESS, (int) result);
     }
 
 }

@@ -172,7 +172,7 @@ public class FragmentDeviceList extends CustomFragment {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(null);
 
-        update(!isAutoConnecting ? R.string.device_title : R.string.device_connecting, !isAutoConnecting);
+        update(!isAutoConnecting ? R.string.app_title : R.string.device_connecting, !isAutoConnecting);
     }
 
     @Override
@@ -321,20 +321,24 @@ public class FragmentDeviceList extends CustomFragment {
                     Toast.makeText(getActivity(), success ? R.string.device_status_connected : R.string.device_status_failed, Toast.LENGTH_SHORT).show();
                 }
 
-                if (mList != null) {
-                    mList.setVisibility(View.VISIBLE);
-                }
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.INVISIBLE);
-                }
-                if (mStatus != null) {
-                    mStatus.setVisibility(View.INVISIBLE);
-                }
-                if (mAdapter != null) {
-                    mAdapter.notifyDataSetChanged();
-                }
+                update(R.string.app_title, true);
 
-                update(R.string.device_title, true);
+                if (isAutoConnecting && getActivity() != null) {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                } else {
+                    if (mList != null) {
+                        mList.setVisibility(View.VISIBLE);
+                    }
+                    if (mProgress != null) {
+                        mProgress.setVisibility(View.INVISIBLE);
+                    }
+                    if (mStatus != null) {
+                        mStatus.setVisibility(View.INVISIBLE);
+                    }
+                    if (mAdapter != null) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
             }
 
         }.execute();

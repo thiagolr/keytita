@@ -27,6 +27,8 @@ public class EffectLogic {
 
     private static boolean isEnabled = false;
 
+    public static int SPEED = 0;
+
     /*******************************************************************************************
      *******************************************************************************************/
 
@@ -38,7 +40,7 @@ public class EffectLogic {
         if (!showStrip()) {
             return false;
         }
-        delay(effect.getSpeed());
+        delay(SPEED);
         return true;
     }
 
@@ -50,7 +52,7 @@ public class EffectLogic {
         if (!showStrip()) {
             return false;
         }
-        delay(effect.getSpeed());
+        delay(SPEED);
         return true;
     }
 
@@ -62,7 +64,7 @@ public class EffectLogic {
         if (!showStrip()) {
             return false;
         }
-        delay(effect.getSpeed());
+        delay(SPEED);
         return true;
     }
 
@@ -75,7 +77,7 @@ public class EffectLogic {
             if (!showStrip()) {
                 return false;
             }
-            delay(effect.getSpeed());
+            delay(SPEED);
         }
         return true;
     }
@@ -87,7 +89,7 @@ public class EffectLogic {
             if (!showStrip()) {
                 return false;
             }
-            delay(effect.getSpeed());
+            delay(SPEED);
         }
         return true;
     }
@@ -101,7 +103,7 @@ public class EffectLogic {
             if (!showStrip()) {
                 return false;
             }
-            delay(effect.getSpeed());
+            delay(SPEED);
         }
         return true;
     }

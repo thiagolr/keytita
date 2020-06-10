@@ -35,7 +35,7 @@
     <string name="device_new">NEW</string>
 
     <!-- SETUP -->
-    <string name="setup_title">Setup</string>
+    <string name="setup_title">Control</string>
     <string name="create_save">Save</string>
     <string name="create_clear">Clear</string>
     <string name="create_undo">Undo</string>

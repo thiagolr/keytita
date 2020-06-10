@@ -17,8 +17,8 @@
 package com.thiagorosa.keytita;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -63,7 +63,7 @@ public class FragmentMain extends CustomFragment {
             }
         });
 
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
 
         return view;
     }
@@ -72,22 +72,26 @@ public class FragmentMain extends CustomFragment {
     public void onResume() {
         super.onResume();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.toolbar_icon);
-
         update(R.string.app_title, true);
+
+        updateToolbar();
+        getSupportActionBar().hide();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateToolbar();
+                getSupportActionBar().show();
+            }
+        }, 300);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            if (getActivity() != null) {
-                getActivity().finish();
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    private void updateToolbar() {
+        getSupportActionBar().setLogo(null);
+        getSupportActionBar().setHomeAsUpIndicator(null);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setHomeButtonEnabled(false);
     }
 
 }

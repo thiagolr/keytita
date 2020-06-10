@@ -25,13 +25,18 @@
 #define PIN_BLUETOOTH_TX 4
 
 #define TYPE_CLEAR 0
-#define TYPE_BRIGHTNESS 1
-#define TYPE_COLOR_SINGLE 11
-#define TYPE_COLOR_RANDOM 12
-#define TYPE_RAINBOW_FULL_FIXED 13
-#define TYPE_RAINBOW_FULL_MOVING 14
-#define TYPE_RAINBOW_SINGLE_SHIFTING 15
-#define TYPE_RAINBOW_GRADUAL_MOVING 16
+#define TYPE_COLOR 1
+#define TYPE_SPEED 2
+#define TYPE_BRIGHTNESS 3
+
+#define TYPE_RANDOM_COLOR 11
+#define TYPE_RAINBOW_FULL_FIXED 12
+#define TYPE_RAINBOW_FULL_MOVING 13
+#define TYPE_RAINBOW_SINGLE_SHIFTING 14
+#define TYPE_RAINBOW_GRADUAL_MOVING 15
+
+#define DEFAULT_BRIGHTNESS 39
+#define DEFAULT_SPEED 50
 
 SoftwareSerial Bluetooth(PIN_BLUETOOTH_RX, PIN_BLUETOOTH_TX);
 
@@ -41,10 +46,10 @@ int btIndex = -1;
 bool btDemo = false;
 int btType = 0;
 int btBrightness = 0;
+int btVelocity = DEFAULT_SPEED;
 int btColorRed = 0;
 int btColorGreen = 0;
 int btColorBlue = 0;
-int btVelocity = 0;
 
 // ###################################################################
 // ###################################################################
@@ -76,13 +81,12 @@ void setup() {
     pinMode(PIN_BLUETOOTH_RX, INPUT_PULLUP);  
   
     FastLED.addLeds<WS2811, PIN_LED, RGB>(leds, NUM_LEDS);
+    FastLED.setBrightness(DEFAULT_BRIGHTNESS);
     FastLED.show();
   
     MIDI.setHandleNoteOn(handleNoteOn);
     MIDI.setHandleNoteOff(handleNoteOff);
     MIDI.begin(MIDI_CHANNEL_OMNI);
-
-    Serial.begin(9600);
 
     Bluetooth.begin(9600);
 }
@@ -102,24 +106,34 @@ void loop() {
         btIndex = -1;
       
         char * data;
-        data = strtok (btData, ",");
+        data = strtok(btData, ",");
         int type = atoi(data);
-        if (type == TYPE_CLEAR) {
-            
-        } else if (type == TYPE_BRIGHTNESS) {
-            data = strtok (NULL, ",");
-            btBrightness = atoi(data);
-            FastLED.setBrightness(btBrightness);
-        } else {
-            btType = type;
-            data = strtok (NULL, ",");
-            btColorRed = atoi(data);
-            data = strtok (NULL, ",");
-            btColorGreen = atoi(data);
-            data = strtok (NULL, ",");
-            btColorBlue = atoi(data);
-            data = strtok (NULL, ",");
-            btVelocity = atoi(data);
+
+        switch (type) {
+            case TYPE_CLEAR:
+                btType = type;
+                break;   
+            case TYPE_COLOR:
+                btType = type;
+                data = strtok(NULL, ",");
+                btColorRed = atoi(data);
+                data = strtok(NULL, ",");
+                btColorGreen = atoi(data);
+                data = strtok(NULL, ",");
+                btColorBlue = atoi(data);
+                break;     
+            case TYPE_SPEED:
+                data = strtok(NULL, ",");
+                btVelocity = atoi(data);    
+                break;            
+            case TYPE_BRIGHTNESS:     
+                data = strtok(NULL, ",");
+                btBrightness = atoi(data);
+                FastLED.setBrightness(btBrightness);
+                break;
+            default:
+                btType = type;
+                break;          
         }
 
         btDemo = true;  
@@ -135,13 +149,14 @@ void handleLedDemo() {
         case TYPE_CLEAR:
             colorSingle(CRGB::Black);
             break;   
-        case TYPE_BRIGHTNESS:
-            
-            break;
-        case TYPE_COLOR_SINGLE:
+        case TYPE_COLOR:
             colorSingle(CRGB(btColorRed, btColorGreen, btColorBlue));
-            break;  
-        case TYPE_COLOR_RANDOM:
+            break;              
+        case TYPE_BRIGHTNESS:            
+            break;
+        case TYPE_SPEED:            
+            break;            
+        case TYPE_RANDOM_COLOR:
             colorRandom();
             break;  
         case TYPE_RAINBOW_FULL_FIXED:
