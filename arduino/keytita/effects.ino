@@ -66,6 +66,20 @@ void rainbowGradualMoving() {
     rainbowGradualMovingIndex++;
 }
 
+// rainbow note
+void rainbowNote() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        colors[i] = pickRainbowColor(i % 7);
+    }
+}
+
+// rainbow octave
+void rainbowOctave() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        colors[i] = pickRainbowColor(i / 7);
+    }
+}
+
 // ###################################################################
 // ###################################################################
 
@@ -100,4 +114,25 @@ CRGB pickWheelColor(uint8_t pos) {
     }
     pos -= 170;
     return CRGB(pos * 3, 255 - pos * 3, 0);
+}
+
+// pick a note color
+CRGB pickRainbowColor(int index) {
+    switch (index) {
+    case 0:
+        return CRGB(0xFF, 0, 0);
+    case 1:
+        return CRGB(0xFF, 0x80, 0);
+    case 2:
+        return CRGB(0xFF, 0xFF, 0);
+    case 3:
+        return CRGB(0, 0x80, 0);
+    case 4:
+        return CRGB(0, 0, 0xFF);
+    case 5:
+        return CRGB(0xFF, 0, 0xFF);
+    case 6:
+        return CRGB(0xFF, 0x69, 0xB4);        
+    }
+    return CRGB(255, 255, 255);
 }

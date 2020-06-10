@@ -106,7 +106,7 @@ public class ActivityMain extends AppCompatActivity {
             transaction.commitAllowingStateLoss();
 
             if (!TextUtils.isEmpty(PreferencesManager.getInstance().getDeviceMAC())) {
-                Fragment fragmentControl = new FragmentSequenceCreate();
+                Fragment fragmentControl = new FragmentControl();
                 FragmentTransaction transactionControl = getSupportFragmentManager().beginTransaction();
                 transactionControl.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);
                 transactionControl.replace(R.id.fragment, fragmentControl, "fragment");
@@ -114,9 +114,9 @@ public class ActivityMain extends AppCompatActivity {
                 transactionControl.commitAllowingStateLoss();
 
                 Bundle args = new Bundle();
-                args.putString(FragmentDeviceList.EXTRA_MAC, PreferencesManager.getInstance().getDeviceMAC());
+                args.putString(FragmentConnection.EXTRA_MAC, PreferencesManager.getInstance().getDeviceMAC());
 
-                Fragment fragmentDevice = new FragmentDeviceList();
+                Fragment fragmentDevice = new FragmentConnection();
                 fragmentDevice.setArguments(args);
                 FragmentTransaction transactionDevice = getSupportFragmentManager().beginTransaction();
                 transactionDevice.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);

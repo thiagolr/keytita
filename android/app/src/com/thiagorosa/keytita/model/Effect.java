@@ -32,6 +32,8 @@ public class Effect {
     public static final int TYPE_RAINBOW_FULL_MOVING = 13;
     public static final int TYPE_RAINBOW_SINGLE_SHIFTING = 14;
     public static final int TYPE_RAINBOW_GRADUAL_MOVING = 15;
+    public static final int TYPE_RAINBOW_NOTE = 16;
+    public static final int TYPE_RAINBOW_OCTAVE = 17;
 
     private int mType;
     private int mColor;

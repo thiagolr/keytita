@@ -16,7 +16,10 @@
 
 package com.thiagorosa.keytita.model;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
+
+import com.thiagorosa.keytita.common.Constants;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -33,9 +36,9 @@ public class EffectLogic {
      *******************************************************************************************/
 
     // static single color
-    public static boolean colorSingle(ArrayList<Led> strip, Effect effect) {
+    public static boolean colorSingle(ArrayList<Led> strip, int color) {
         for (int i = 0; i < strip.size(); i++) {
-            setPixel(strip, i, effect.getColor());
+            setPixel(strip, i, color);
         }
         if (!showStrip()) {
             return false;
@@ -45,7 +48,7 @@ public class EffectLogic {
     }
 
     // static random colors
-    public static boolean colorRandom(ArrayList<Led> strip, Effect effect) {
+    public static boolean colorRandom(ArrayList<Led> strip) {
         for (int i = 0; i < strip.size(); i++) {
             setPixel(strip, i, colorRandom());
         }
@@ -57,7 +60,7 @@ public class EffectLogic {
     }
 
     // complete static rainbow
-    public static boolean rainbowCompleteStatic(ArrayList<Led> strip, Effect effect) {
+    public static boolean rainbowCompleteStatic(ArrayList<Led> strip) {
         for (int i = 0; i < strip.size(); i++) {
             setPixel(strip, i, colorWheel((i * 256 / strip.size()) & 255));
         }
@@ -69,7 +72,7 @@ public class EffectLogic {
     }
 
     // complete moving rainbow colors
-    public static boolean rainbowCompleteMoving(ArrayList<Led> strip, Effect effect) {
+    public static boolean rainbowCompleteMoving(ArrayList<Led> strip) {
         for (int j = 0; j < 256; j++) {
             for (int i = 0; i < strip.size(); i++) {
                 setPixel(strip, i, colorWheel(((i * 256 / strip.size()) + j) & 255));
@@ -83,7 +86,7 @@ public class EffectLogic {
     }
 
     // single color shifting rainbow
-    public static boolean rainbowSingleColorShifting(ArrayList<Led> strip, Effect effect) {
+    public static boolean rainbowSingleColorShifting(ArrayList<Led> strip) {
         for (int j = 0; j < 256; j++) {
             setAll(strip, colorWheel(j & 255));
             if (!showStrip()) {
@@ -95,7 +98,7 @@ public class EffectLogic {
     }
 
     // gradual moving rainbow colors
-    public static boolean rainbowGradualMoving(ArrayList<Led> strip, Effect effect) {
+    public static boolean rainbowGradualMoving(ArrayList<Led> strip) {
         for (int j = 0; j < 256; j++) {
             for (int i = 0; i < strip.size(); i++) {
                 setPixel(strip, i, colorWheel((i + j) & 255));
@@ -105,6 +108,30 @@ public class EffectLogic {
             }
             delay(SPEED);
         }
+        return true;
+    }
+
+    // note rainbow
+    public static boolean rainbowNote(ArrayList<Led> strip) {
+        for (int i = 0; i < strip.size(); i++) {
+            setPixel(strip, i, colorRainbow(i % Constants.TOTAL_NOTES_BY_OCTAVE));
+        }
+        if (!showStrip()) {
+            return false;
+        }
+        delay(SPEED);
+        return true;
+    }
+
+    // octave rainbow
+    public static boolean rainbowOctave(ArrayList<Led> strip) {
+        for (int i = 0; i < strip.size(); i++) {
+            setPixel(strip, i, colorRainbow(i / Constants.TOTAL_NOTES_BY_OCTAVE));
+        }
+        if (!showStrip()) {
+            return false;
+        }
+        delay(SPEED);
         return true;
     }
 
@@ -159,6 +186,7 @@ public class EffectLogic {
         return 0xFFFFFFFF;
     }
 
+    @SuppressLint("Range")
     private static int colorWheel(int pos) {
         pos = 255 - pos;
         if (pos < 85) {
@@ -170,6 +198,26 @@ public class EffectLogic {
         }
         pos -= 170;
         return Color.rgb(pos * 3, 255 - pos * 3, 0);
+    }
+
+    private static int colorRainbow(int index) {
+        switch (index) {
+            case 0:
+                return 0xFFFF0000;
+            case 1:
+                return 0xFFFF8000;
+            case 2:
+                return 0xFFFFFF00;
+            case 3:
+                return 0xFF008000;
+            case 4:
+                return 0xFF0000FF;
+            case 5:
+                return 0xFFFF00FF;
+            case 6:
+                return 0xFFFF69B4;
+        }
+        return 0xFFFFFFFF;
     }
 
     private static int random(int max) {

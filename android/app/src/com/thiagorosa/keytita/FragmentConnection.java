@@ -57,7 +57,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public class FragmentDeviceList extends CustomFragment {
+public class FragmentConnection extends CustomFragment {
 
     public static final String EXTRA_MAC = "mac-address";
 
@@ -319,11 +319,10 @@ public class FragmentDeviceList extends CustomFragment {
 
                 if (getActivity() != null) {
                     Toast.makeText(getActivity(), success ? R.string.device_status_connected : R.string.device_status_failed, Toast.LENGTH_SHORT).show();
+                    update(R.string.app_title, true);
                 }
 
-                update(R.string.app_title, true);
-
-                if (isAutoConnecting && getActivity() != null) {
+                if (isAutoConnecting && success && getActivity() != null) {
                     getActivity().getSupportFragmentManager().popBackStack();
                 } else {
                     if (mList != null) {

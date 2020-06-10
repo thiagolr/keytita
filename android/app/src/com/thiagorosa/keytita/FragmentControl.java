@@ -35,7 +35,7 @@ import com.thiagorosa.keytita.manager.PreferencesManager;
 import com.thiagorosa.keytita.model.Effect;
 import com.thiagorosa.keytita.model.EffectLogic;
 
-public class FragmentSequenceCreate extends CustomFragment {
+public class FragmentControl extends CustomFragment {
 
     private ViewLed mViewLed = null;
     private TextView mDescription = null;
@@ -61,7 +61,7 @@ public class FragmentSequenceCreate extends CustomFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.control, null);
 
-        mDescription = view.findViewById(R.id.sequence_name);
+        mDescription = view.findViewById(R.id.description);
 
         mViewLed = view.findViewById(R.id.led_view);
         mViewLed.reset();
@@ -198,7 +198,7 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonRandomColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDescription.setText(R.string.color_random);
+                updateDescription(R.string.color_random);
                 updateSequence(new Effect(Effect.TYPE_COLOR_RANDOM));
             }
         });
@@ -207,7 +207,7 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonRainbowFullFixed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDescription.setText(R.string.rainbow_full_fixed);
+                updateDescription(R.string.rainbow_full_fixed);
                 updateSequence(new Effect(Effect.TYPE_RAINBOW_FULL_FIXED));
             }
         });
@@ -216,7 +216,7 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonRainbowFullMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDescription.setText(R.string.rainbow_full_moving);
+                updateDescription(R.string.rainbow_full_moving);
                 updateSequence(new Effect(Effect.TYPE_RAINBOW_FULL_MOVING));
             }
         });
@@ -225,7 +225,7 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonRainbowSingleShifting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDescription.setText(R.string.rainbow_single_shifting);
+                updateDescription(R.string.rainbow_single_shifting);
                 updateSequence(new Effect(Effect.TYPE_RAINBOW_SINGLE_SHIFTING));
             }
         });
@@ -234,8 +234,26 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonRainbowGradualMoving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDescription.setText(R.string.rainbow_gradual_moving);
+                updateDescription(R.string.rainbow_gradual_moving);
                 updateSequence(new Effect(Effect.TYPE_RAINBOW_GRADUAL_MOVING));
+            }
+        });
+
+        Button mButtonRainbowNote = view.findViewById(R.id.rainbow_note);
+        mButtonRainbowNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateDescription(R.string.rainbow_note);
+                updateSequence(new Effect(Effect.TYPE_RAINBOW_NOTE));
+            }
+        });
+
+        Button mButtonRainbowOctave = view.findViewById(R.id.rainbow_octave);
+        mButtonRainbowOctave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateDescription(R.string.rainbow_octave);
+                updateSequence(new Effect(Effect.TYPE_RAINBOW_OCTAVE));
             }
         });
 
@@ -324,7 +342,7 @@ public class FragmentSequenceCreate extends CustomFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.create, menu);
+        inflater.inflate(R.menu.control, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -344,13 +362,14 @@ public class FragmentSequenceCreate extends CustomFragment {
             PreferencesManager.getInstance().setColor(6, Color.TRANSPARENT);
             PreferencesManager.getInstance().setColor(7, Color.TRANSPARENT);
             PreferencesManager.getInstance().setColor(8, Color.TRANSPARENT);
+            updateColors();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void updateColor(int color) {
-        mDescription.setText(R.string.color_single);
+        updateDescription(R.string.color_single);
         updateSequence(new Effect(Effect.TYPE_COLOR, color));
     }
 
@@ -374,6 +393,10 @@ public class FragmentSequenceCreate extends CustomFragment {
         mButtonMore8.setText(PreferencesManager.getInstance().getColor(8) == 0 ? "+" : "");
     }
 
+    private void updateDescription(int id) {
+        mDescription.setText(id);
+    }
+
     private void updateSequence(Effect effect) {
         mViewLed.load(effect);
         if (getActivity() != null) {
@@ -395,6 +418,7 @@ public class FragmentSequenceCreate extends CustomFragment {
                     cp.dismiss();
 
                     updateColor(color);
+                    updateColors();
                 }
             });
         } else {

@@ -39,7 +39,7 @@ public class FragmentMain extends CustomFragment {
         mSelectDevice.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new FragmentDeviceList();
+                Fragment fragment = new FragmentConnection();
                 FragmentTransaction transactionControl = getFragmentManager().beginTransaction();
                 transactionControl.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);
                 transactionControl.replace(R.id.fragment, fragment, "fragment");
@@ -54,7 +54,7 @@ public class FragmentMain extends CustomFragment {
         mSequenceCreate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new FragmentSequenceCreate();
+                Fragment fragment = new FragmentControl();
                 FragmentTransaction transactionControl = getFragmentManager().beginTransaction();
                 transactionControl.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);
                 transactionControl.replace(R.id.fragment, fragment, "fragment");

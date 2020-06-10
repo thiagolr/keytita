@@ -34,6 +34,8 @@
 #define TYPE_RAINBOW_FULL_MOVING 13
 #define TYPE_RAINBOW_SINGLE_SHIFTING 14
 #define TYPE_RAINBOW_GRADUAL_MOVING 15
+#define TYPE_RAINBOW_NOTE 16
+#define TYPE_RAINBOW_OCTAVE 17
 
 #define DEFAULT_BRIGHTNESS 39
 #define DEFAULT_SPEED 50
@@ -171,6 +173,12 @@ void handleLedDemo() {
         case TYPE_RAINBOW_GRADUAL_MOVING:
             rainbowGradualMoving();
             break;
+        case TYPE_RAINBOW_NOTE:
+            rainbowNote();
+            break;
+        case TYPE_RAINBOW_OCTAVE:
+            rainbowOctave();
+            break;                        
     }
     
     showAllLeds();

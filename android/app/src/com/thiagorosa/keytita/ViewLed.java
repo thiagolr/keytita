@@ -17,12 +17,14 @@
 package com.thiagorosa.keytita;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.thiagorosa.keytita.common.Constants;
 import com.thiagorosa.keytita.common.Logger;
 import com.thiagorosa.keytita.model.Effect;
 import com.thiagorosa.keytita.model.EffectLogic;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 
 public class ViewLed extends View {
 
-    private static final int NUM_LEDS = 52;
+    private static final int NUM_LEDS = Constants.TOTAL_NOTES;
 
     private static final int COLOR_BACKGROUND = 0xFFCCCCCC;
 
@@ -44,8 +46,11 @@ public class ViewLed extends View {
 
     private int mCellWidth = 0;
     private int mCellHeight = 0;
-    private int mCellMargin = 0;
+    private int mCellMarginLeft = 0;
+    private int mCellMarginTop = 0;
     private int mLedWidth = 0;
+    private int mLedHeight = 0;
+    private int mLedSpacing = 0;
 
     /*******************************************************************************************
      *******************************************************************************************/
@@ -107,6 +112,19 @@ public class ViewLed extends View {
     }
 
     @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        mCellWidth = 0;
+        mCellHeight = 0;
+        mCellMarginLeft = 0;
+        mCellMarginTop = 0;
+        mLedWidth = 0;
+        mLedHeight = 0;
+        mLedSpacing = 0;
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
@@ -117,18 +135,23 @@ public class ViewLed extends View {
             return;
         }
 
-        if (mCellWidth == 0 || mCellHeight == 0 || mLedWidth == 0) {
+        if (mCellWidth == 0 || mCellHeight == 0 || mLedWidth == 0 || mLedHeight == 0) {
             mCellWidth = getWidth();
             mCellHeight = getHeight();
-            mLedWidth = mCellWidth / (NUM_LEDS + 2);
-            mCellMargin = mLedWidth;
+
+            mLedWidth = 12;
+            mLedHeight = 100;
+            mLedSpacing = 9;
+
+            mCellMarginLeft = (mCellWidth - (mLedWidth * NUM_LEDS + mLedSpacing * (NUM_LEDS - 1))) / 2;
+            mCellMarginTop = (mCellHeight - mLedHeight) / 2;
         }
 
         for (int l = 0; l < NUM_LEDS; l++) {
             mPaintLed.setColor(Color.WHITE);
-            canvas.drawRect(+mCellMargin + l * mLedWidth, mCellHeight / 2 - mLedWidth * 2, +mCellMargin + l * mLedWidth + mLedWidth / 2, mCellHeight / 2 + mLedWidth * 2, mPaintLed);
+            canvas.drawRect(mCellMarginLeft + l * (mLedWidth + mLedSpacing), mCellMarginTop, mCellMarginLeft + l * (mLedWidth + mLedSpacing) + mLedWidth, mCellMarginTop + mLedHeight, mPaintLed);
             mPaintLed.setColor(mLeds.get(l).getColor());
-            canvas.drawRect(mCellMargin + l * mLedWidth, mCellHeight / 2 - mLedWidth * 2, mCellMargin + l * mLedWidth + mLedWidth / 2, mCellHeight / 2 + mLedWidth * 2, mPaintLed);
+            canvas.drawRect(mCellMarginLeft + l * (mLedWidth + mLedSpacing), mCellMarginTop, mCellMarginLeft + l * (mLedWidth + mLedSpacing) + mLedWidth, mCellMarginTop + mLedHeight, mPaintLed);
         }
 
         invalidate();
@@ -138,7 +161,6 @@ public class ViewLed extends View {
      *******************************************************************************************/
 
     public void reset() {
-        Logger.EFFECT("reset()");
         for (int i = 0; i < NUM_LEDS; i++) {
             mLeds.get(i).setColor(Color.WHITE);
         }
@@ -149,7 +171,6 @@ public class ViewLed extends View {
     }
 
     public void clear() {
-        Logger.EFFECT("clear()");
         mEffect = null;
         EffectLogic.disable();
     }
@@ -174,38 +195,47 @@ public class ViewLed extends View {
     private boolean show() {
         try {
             if (mEffect == null) {
-                Logger.EFFECT("show() effect is null");
                 return false;
             }
 
             switch (mEffect.getType()) {
                 case Effect.TYPE_COLOR:
-                    if (!EffectLogic.colorSingle(mLeds, mEffect)) {
+                    if (!EffectLogic.colorSingle(mLeds, mEffect.getColor())) {
                         return false;
                     }
                     break;
                 case Effect.TYPE_COLOR_RANDOM:
-                    if (!EffectLogic.colorRandom(mLeds, mEffect)) {
+                    if (!EffectLogic.colorRandom(mLeds)) {
                         return false;
                     }
                     break;
                 case Effect.TYPE_RAINBOW_FULL_FIXED:
-                    if (!EffectLogic.rainbowCompleteStatic(mLeds, mEffect)) {
+                    if (!EffectLogic.rainbowCompleteStatic(mLeds)) {
                         return false;
                     }
                     break;
                 case Effect.TYPE_RAINBOW_FULL_MOVING:
-                    if (!EffectLogic.rainbowCompleteMoving(mLeds, mEffect)) {
+                    if (!EffectLogic.rainbowCompleteMoving(mLeds)) {
                         return false;
                     }
                     break;
                 case Effect.TYPE_RAINBOW_SINGLE_SHIFTING:
-                    if (!EffectLogic.rainbowSingleColorShifting(mLeds, mEffect)) {
+                    if (!EffectLogic.rainbowSingleColorShifting(mLeds)) {
                         return false;
                     }
                     break;
                 case Effect.TYPE_RAINBOW_GRADUAL_MOVING:
-                    if (!EffectLogic.rainbowGradualMoving(mLeds, mEffect)) {
+                    if (!EffectLogic.rainbowGradualMoving(mLeds)) {
+                        return false;
+                    }
+                    break;
+                case Effect.TYPE_RAINBOW_NOTE:
+                    if (!EffectLogic.rainbowNote(mLeds)) {
+                        return false;
+                    }
+                    break;
+                case Effect.TYPE_RAINBOW_OCTAVE:
+                    if (!EffectLogic.rainbowOctave(mLeds)) {
                         return false;
                     }
                     break;

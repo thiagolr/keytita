@@ -51,11 +51,13 @@
     <string name="create_effect_none">no color/effect selected</string>
 
     <!-- EFFECTS -->
-    <string name="color_single">SINGLE COLOR</string>
-    <string name="color_random">RANDOM COLOR</string>
-    <string name="rainbow_full_fixed">COMPLETE\nSTATIC RAINBOW</string>
-    <string name="rainbow_full_moving">COMPLETE\nMOVING RAINBOW</string>
-    <string name="rainbow_single_shifting">SINGLE COLOR\nSHIFTING RAINBOW</string>
-    <string name="rainbow_gradual_moving">GRADUAL COLOR\nMOVING RAINBOW</string>
+    <string name="color_single">Single Color</string>
+    <string name="color_random">Random Color</string>
+    <string name="rainbow_full_fixed">Complete Static Rainbow</string>
+    <string name="rainbow_full_moving">Complete Moving Rainbow</string>
+    <string name="rainbow_single_shifting">Single Color Shifting Rainbow</string>
+    <string name="rainbow_gradual_moving">Gradual Color Moving Rainbow</string>
+    <string name="rainbow_note">Note Rainbow</string>
+    <string name="rainbow_octave">Octave Rainbow</string>
 
 </resources>
