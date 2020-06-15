@@ -15,20 +15,21 @@ $WHITE_HEIGHT = 10;
 $BLACK_LENGTH = 85;
 $BLACK_HEIGHT = 15;
 $SPACE_WIDTH = 1;
+$THICKNESS = 0;
 $OCTAVES = 1;
 $INCLUDE_A0_B0 = false;
 $INCLUDE_END_C = false;
 
-$MIRRORED = false;
+$INCLUDE_SOLID_SPACE = false;
 $KEY_COLOR_ALPHA = 1.0;
 
-Piano();
+//Piano();
 //Piano61();
 //Piano88();
    
-module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight = $WHITE_HEIGHT, blackLength = $BLACK_LENGTH, blackHeight = $BLACK_HEIGHT, spaceWidth = $SPACE_WIDTH, octaves = $OCTAVES, includeA0B0 = $INCLUDE_A0_B0, includeEndC = $INCLUDE_END_C) {
-    
-    baseWhiteWidth = 840;
+module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight = $WHITE_HEIGHT, blackLength = $BLACK_LENGTH, blackHeight = $BLACK_HEIGHT, spaceWidth = $SPACE_WIDTH, thickness = $THICKNESS, octaves = $OCTAVES, includeA0B0 = $INCLUDE_A0_B0, includeEndC = $INCLUDE_END_C, includeSolidSpace = $INCLUDE_SOLID_SPACE) {
+   
+    baseWhiteWidth = 840;   
     baseSizeA = 525;
     baseSizeB = 490;
     baseSizeC = 455;
@@ -39,7 +40,7 @@ module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight
     sizeC = baseSizeC * baseFactor;
     sizeBSpaced = sizeB + spaceWidth;
     
-    holeSizeOffset = 2;
+    holeSizeOffset = 0;
     holeSizeX = sizeBSpaced;
     holeSizeY = blackLength + spaceWidth * 2;
     holeSizeZ = blackHeight + holeSizeOffset;     
@@ -60,7 +61,11 @@ module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight
         union() {
             for (i = [0 : octaves - 1]) {
                 for (j = [0 : 6]) {
-                    posX = a0b0Width + i * octaveWidth + j * (whiteWidth + spaceWidth);                Key("white", posX, 0, 0, whiteWidth, whiteLength, whiteHeight);
+                    posX = a0b0Width + i * octaveWidth + j * (whiteWidth + spaceWidth);
+                    Key("white", posX, 0, 0, whiteWidth, whiteLength, whiteHeight);
+                    if (includeSolidSpace) {
+                        Key("blue", posX + whiteWidth, 0, 0, spaceWidth, whiteLength, whiteHeight); 
+                    }
                 }            
             }      
         }
@@ -68,19 +73,30 @@ module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight
         for (i = [0 : octaves - 1]) {
             for (j = [0 : 4]) {
                 posX = a0b0Width + i * octaveWidth + blackPositions[j];         
-                posY = $MIRRORED ? -spaceWidth : whiteLength - blackLength - spaceWidth;
+                posY = whiteLength - blackLength - spaceWidth;
                 posZ = -holeSizeOffset / 2;
-                Key("white", posX, posY, posZ, holeSizeX, holeSizeY, holeSizeZ);  
+                Key("white", posX, posY, posZ, holeSizeX, holeSizeY, holeSizeZ);
             }
         }
     }
-
+    
     for (i = [0 : octaves - 1]) {
         for (j = [0 : 4]) {
             posX = a0b0Width + i * octaveWidth + blackPositions[j] + (sizeBSpaced - blackWidth) / 2;
-            posY = $MIRRORED ? 0 : whiteLength - blackLength;
-            posZ = 0; 
-            Key("black", posX, posY, posZ, blackWidth, blackLength, blackHeight);  
+            posY = whiteLength - blackLength;
+            posZ = 0;             
+            Key("black", posX, posY, posZ, blackWidth, blackLength, blackHeight);
+            if (includeSolidSpace || thickness > 0) {
+                posX = a0b0Width + i * octaveWidth + blackPositions[j];
+                posY = whiteLength - blackLength - spaceWidth;
+                posZ = -holeSizeOffset / 2;                
+                if (includeSolidSpace) {
+                    Key("blue", posX, posY, posZ, holeSizeX, holeSizeY, holeSizeZ);
+                }                
+                if (thickness > 0) {           
+                    Key("red", posX - thickness, posY - thickness, posZ, holeSizeX + thickness * 2, holeSizeY + thickness, holeSizeZ + thickness); 
+                }
+            }
         }    
     }
     
@@ -92,24 +108,42 @@ module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight
                 for (j = [0 : 1]) {
                     posX = j * (whiteWidth + spaceWidth);                    
                     Key("white", posX, 0, 0, whiteWidth, whiteLength, whiteHeight);
+                    if (includeSolidSpace) {
+                        Key("blue", posX + whiteWidth, 0, 0, spaceWidth, whiteLength, whiteHeight); 
+                    }
                 }            
             } 
          
             posX = blackPosition;         
-            posY = $MIRRORED ? -spaceWidth : whiteLength - blackLength - spaceWidth;
+            posY = whiteLength - blackLength - spaceWidth;
             posZ = -holeSizeOffset / 2;
             Key("white", posX, posY, posZ, holeSizeX, holeSizeY, holeSizeZ);              
-        }
+        }   
       
         posX = blackPosition + (sizeBSpaced - blackWidth) / 2;
-        posY = $MIRRORED ? 0 : whiteLength - blackLength;
+        posY = whiteLength - blackLength;
         posZ = 0;
-        Key("black", posX, posY, posZ, blackWidth, blackLength, blackHeight);  
+        Key("black", posX, posY, posZ, blackWidth, blackLength, blackHeight);
+
+        if (includeSolidSpace || thickness > 0) {
+            posX = blackPosition;         
+            posY = whiteLength - blackLength - spaceWidth;
+            posZ = -holeSizeOffset / 2;            
+            if (includeSolidSpace) {
+                Key("blue", posX, posY, posZ, holeSizeX, holeSizeY, holeSizeZ);
+            }            
+            if (thickness > 0) {           
+                Key("red", posX - thickness, posY - thickness, posZ, holeSizeX + thickness * 2, holeSizeY + thickness, holeSizeZ + thickness); 
+            }
+        }
     }
     
     if (includeEndC) {
         posX = a0b0Width + octaves * octaveWidth; 
-        Key("white", posX, 0, 0, whiteWidth, whiteLength, whiteHeight);
+        Key("white", posX, 0, 0, whiteWidth, whiteLength, whiteHeight);        
+        if (includeSolidSpace) {
+            Key("blue", posX + whiteWidth, 0, 0, spaceWidth, whiteLength, whiteHeight); 
+        }
     }
 }
 
