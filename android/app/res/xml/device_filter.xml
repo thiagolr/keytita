@@ -1,4 +1,5 @@
-/*
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   Copyright (c) 2020 Thiago Lopes Rosa
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +13,8 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- */
+-->
 
-package com.thiagorosa.keytita.common;
-
-public class Constants {
-
-    public static final int USB_VENDOR_ID = 9025;
-    public static final int USB_PRODUCT_ID = 32822;
-
-    public static final int TOTAL_NOTES = 49;
-    public static final int TOTAL_NOTES_BY_OCTAVE = 7;
-
-    public static boolean DEBUG_LOG_BLUETOOTH = true;
-    public static boolean DEBUG_LOG_EFFECT = true;
-    public static boolean DEBUG_LOG_SERIAL = true;
-    public static boolean DEBUG_LOG_USB = true;
-
-}
+<resources>
+    <usb-device vendor-id="9025" product-id="32822" />
+</resources>

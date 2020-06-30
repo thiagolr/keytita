@@ -19,6 +19,7 @@ package com.thiagorosa.keytita.model;
 import android.graphics.Color;
 
 import com.thiagorosa.keytita.manager.BluetoothManager;
+import com.thiagorosa.keytita.manager.USBManager;
 
 public class Effect {
 
@@ -58,26 +59,31 @@ public class Effect {
     }
 
     private void type() {
-        BluetoothManager.getInstance().write(mType);
+        //BluetoothManager.getInstance().write(mType);
+        USBManager.getInstance().write(mType);
     }
 
     public void color() {
-        BluetoothManager.getInstance().write(mType, Color.red(mColor), Color.green(mColor), Color.blue(mColor));
+        //BluetoothManager.getInstance().write(mType, Color.red(mColor), Color.green(mColor), Color.blue(mColor));
+        USBManager.getInstance().write(mType, Color.red(mColor), Color.green(mColor), Color.blue(mColor));
     }
 
     public static void clear() {
-        BluetoothManager.getInstance().write(TYPE_CLEAR);
+        //BluetoothManager.getInstance().write(TYPE_CLEAR);
+        USBManager.getInstance().write(TYPE_CLEAR);
     }
 
     public static void speed(int value) {
-        BluetoothManager.getInstance().write(TYPE_SPEED, value);
+        //BluetoothManager.getInstance().write(TYPE_SPEED, value);
+        USBManager.getInstance().write(TYPE_SPEED, value);
     }
 
     public static void brightness(int value) {
         double a = 9.7758463166360387E-01;
         double b = 5.5498961535023345E-02;
         double result = Math.floor((a * Math.exp(b * value) + .5)) - 1;
-        BluetoothManager.getInstance().write(TYPE_BRIGHTNESS, (int) result);
+        //BluetoothManager.getInstance().write(TYPE_BRIGHTNESS, (int) result);
+        USBManager.getInstance().write(TYPE_BRIGHTNESS, (int) result);
     }
 
 }

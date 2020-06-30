@@ -37,6 +37,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.thiagorosa.keytita.manager.BluetoothManager;
 import com.thiagorosa.keytita.manager.PreferencesManager;
+import com.thiagorosa.keytita.manager.USBManager;
 
 public class ActivityMain extends AppCompatActivity {
 
@@ -128,10 +129,18 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        USBManager.getInstance().setup(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
         BluetoothManager.getInstance().disconnect();
+        USBManager.getInstance().close();
     }
 
     @Override
@@ -170,6 +179,18 @@ public class ActivityMain extends AppCompatActivity {
             if (subtitle != null) {
                 getSupportActionBar().setSubtitle(subtitle);
             }
+        }
+    }
+
+    public void refreshConnection() {
+        if (getSupportActionBar() != null) {
+            String status = "";
+            if (BluetoothManager.getInstance().isConnected() || USBManager.getInstance().isConnected()) {
+                status = getText(R.string.device_connected).toString();
+            } else {
+                status = getText(R.string.device_not_connected).toString();
+            }
+            getSupportActionBar().setSubtitle(status);
         }
     }
 

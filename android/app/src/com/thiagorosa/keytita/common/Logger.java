@@ -34,4 +34,16 @@ public class Logger {
         }
     }
 
+    public static void SERIAL(String text) {
+        if (Constants.DEBUG_LOG_SERIAL) {
+            Log.d(TAG, text);
+        }
+    }
+
+    public static void USB(String text) {
+        if (Constants.DEBUG_LOG_USB) {
+            Log.d(TAG, "[USB] " + text);
+        }
+    }
+
 }

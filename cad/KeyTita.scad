@@ -98,17 +98,16 @@ union() {
         }
     }
 
-    difference() {
-        translate([mainWidth, 0, 0])    
-            MainBack();
-        
-        translate([mainWidth + mainOverlap, 0, 0])
-            cube([mainWidth, mainDepth, mainHeight]);
+    if (overlapLeft) {
+        difference() {
+            translate([mainWidth, 0, 0])    
+                MainBack();
+            
+            translate([mainWidth + mainOverlap, 0, 0])
+                cube([mainWidth, mainDepth, mainHeight]);
+        }
     }
 }
-
-
-//rotate([-90,0,0]) #cylinder(r=screwHoleRadius, h=14);
 
 // ############################################################################################
 
@@ -238,6 +237,9 @@ module BlockScrew() {
 
         translate([mainWidth / 2 - screwHolderSize / 2 - mainThickness / 2, 0, screwHolePosition]) 
             ScrewHole();
+        
+        translate([mainWidth - screwHolderSize / 2 - mainThickness / 2, 0, screwHolePosition]) 
+            ScrewHole();
     }
 }
 
@@ -253,6 +255,8 @@ module BlockNut() {
         }
         
         translate([mainWidth / 2 - screwHolderSize / 2 - mainThickness / 2, mainDepth - nutHoleHeight, screwHolePosition]) NutHole();
+        
+        translate([mainWidth - screwHolderSize / 2 - mainThickness / 2, mainDepth - nutHoleHeight, screwHolePosition]) NutHole();
     }
 }
 
