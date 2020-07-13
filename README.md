@@ -1,3 +1,5 @@
+[ ![Download](https://api.bintray.com/packages/pes8/maven/Material-Color-Picker-Dialog/images/download.svg) ](https://bintray.com/pes8/maven/Material-Color-Picker-Dialog/_latestVersion) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DV499BFU9XWFQ)
+
 KeyTita
 ========
 
@@ -12,6 +14,9 @@ KeyTita
 
 - <feat1>
 - <feat2>
+
+### Case
+https://github.com/zygmuntw/3D-Printed-Case-for-Arduino
 
 ### Screenshots
 
