@@ -22,12 +22,13 @@ $INCLUDE_END_C = false;
 
 $INCLUDE_SOLID_SPACE = false;
 $KEY_COLOR_ALPHA = 1.0;
+$EXTRA_PADDING = 0;
 
 //Piano();
 //Piano61();
 //Piano88();
    
-module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight = $WHITE_HEIGHT, blackLength = $BLACK_LENGTH, blackHeight = $BLACK_HEIGHT, spaceWidth = $SPACE_WIDTH, thickness = $THICKNESS, octaves = $OCTAVES, includeA0B0 = $INCLUDE_A0_B0, includeEndC = $INCLUDE_END_C, includeSolidSpace = $INCLUDE_SOLID_SPACE) {
+module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight = $WHITE_HEIGHT, blackLength = $BLACK_LENGTH, blackHeight = $BLACK_HEIGHT, spaceWidth = $SPACE_WIDTH, thickness = $THICKNESS, extraPadding = $EXTRA_PADDING, octaves = $OCTAVES, includeA0B0 = $INCLUDE_A0_B0, includeEndC = $INCLUDE_END_C, includeSolidSpace = $INCLUDE_SOLID_SPACE) {
    
     baseWhiteWidth = 840;   
     baseSizeA = 525;
@@ -46,7 +47,7 @@ module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight
     holeSizeZ = blackHeight + holeSizeOffset;     
     
     a0b0Width = includeA0B0 ? (2 * whiteWidth) + (2 * spaceWidth) : 0;
-    octaveWidth = (7 * whiteWidth) + (7 * spaceWidth);
+    octaveWidth = (7 * whiteWidth) + (7 * spaceWidth) + extraPadding;
     blackWidth = sizeBSpaced - spaceWidth * 2;
 
     blackPositions = [
@@ -61,10 +62,12 @@ module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight
         union() {
             for (i = [0 : octaves - 1]) {
                 for (j = [0 : 6]) {
-                    posX = a0b0Width + i * octaveWidth + j * (whiteWidth + spaceWidth);
-                    Key("white", posX, 0, 0, whiteWidth, whiteLength, whiteHeight);
+                    extraPos = j == 0 ? 0 : extraPadding;
+                    extraWidth = j == 0 ? extraPadding : 0;
+                    posX = a0b0Width + i * octaveWidth + j * (whiteWidth + spaceWidth) + extraPos;
+                    Key("white", posX, 0, 0, whiteWidth + extraWidth, whiteLength, whiteHeight);
                     if (includeSolidSpace) {
-                        Key("blue", posX + whiteWidth, 0, 0, spaceWidth, whiteLength, whiteHeight); 
+                        Key("blue", posX + whiteWidth + extraWidth, 0, 0, spaceWidth, whiteLength, whiteHeight); 
                     }
                 }            
             }      
@@ -72,29 +75,33 @@ module Piano(whiteLength = $WHITE_LENGTH, whiteWidth = $WHITE_WIDTH, whiteHeight
      
         for (i = [0 : octaves - 1]) {
             for (j = [0 : 4]) {
-                posX = a0b0Width + i * octaveWidth + blackPositions[j];         
+                extraPos = j == 0 ? 0 : extraPadding;
+                extraWidth = j == 0 ? extraPadding : 0;
+                posX = a0b0Width + i * octaveWidth + blackPositions[j] + extraPos;         
                 posY = whiteLength - blackLength - spaceWidth;
                 posZ = -holeSizeOffset / 2;
-                Key("white", posX, posY, posZ, holeSizeX, holeSizeY, holeSizeZ);
+                Key("white", posX, posY, posZ, holeSizeX + extraWidth, holeSizeY, holeSizeZ);
             }
         }
     }
     
     for (i = [0 : octaves - 1]) {
         for (j = [0 : 4]) {
-            posX = a0b0Width + i * octaveWidth + blackPositions[j] + (sizeBSpaced - blackWidth) / 2;
+            extraPos = j == 0 ? 0 : extraPadding;
+            extraWidth = j == 0 ? extraPadding : 0;
+            posX = a0b0Width + i * octaveWidth + blackPositions[j] + extraPos + (sizeBSpaced - blackWidth) / 2;
             posY = whiteLength - blackLength;
             posZ = 0;             
-            Key("black", posX, posY, posZ, blackWidth, blackLength, blackHeight);
+            Key("black", posX, posY, posZ, blackWidth + extraWidth, blackLength, blackHeight);
             if (includeSolidSpace || thickness > 0) {
-                posX = a0b0Width + i * octaveWidth + blackPositions[j];
+                posX = a0b0Width + i * octaveWidth + blackPositions[j] + extraPos;
                 posY = whiteLength - blackLength - spaceWidth;
                 posZ = -holeSizeOffset / 2;                
                 if (includeSolidSpace) {
-                    Key("blue", posX, posY, posZ, holeSizeX, holeSizeY, holeSizeZ);
+                    Key("blue", posX, posY, posZ, holeSizeX + extraWidth, holeSizeY, holeSizeZ);
                 }                
                 if (thickness > 0) {           
-                    Key("red", posX - thickness, posY - thickness, posZ, holeSizeX + thickness * 2, holeSizeY + thickness, holeSizeZ + thickness); 
+                    Key("red", posX - thickness, posY - thickness, posZ, holeSizeX + thickness * 2 + extraWidth, holeSizeY + thickness, holeSizeZ + thickness); 
                 }
             }
         }    

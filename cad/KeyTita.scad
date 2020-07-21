@@ -1,13 +1,12 @@
-include <Piano.scad>;
+/* KeyTita
+ *
+ * Author: Thiago Rosa (http://www.thiagorosa.com)
+ * Project: KeyTita (https://github.com/thiagolr/keytita)
+ * License: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)
+ *
+ */
 
-// C0 fazer
-// C1 imprimir
-// C2 (BACK/FRONT OK)
-// C3 (BACK/FRONT OK)
-// C4 (BACK/FRONT OK)
-// C5 (BACK/FRONT OK)
-// C6 (BACK/FRONT OK)
-// C7 (BACK/FRONT OK)
+include <Piano.scad>;
 
 $UNIT_THICKNESS = 1.2;
 $UNIT_LOCK_SIZE = 3;
@@ -15,6 +14,7 @@ $UNIT_LOCK_OFFSET = 0.2;
 $UNIT_DEPTH = 15;
 $UNIT_OVERLAP = 14.0625;
 $UNIT_FIRST_OCTAVE = 40.59;
+$UNIT_EXTRA_PADDING = 0;
 
 $LED_SMD_SIZE = 5;
 $LED_SMD_OFFSET = 0.5;
@@ -40,9 +40,6 @@ $WHITE_HEIGHT = 17.8;
 $BLACK_LENGTH = 95;
 $BLACK_HEIGHT = $WHITE_HEIGHT + 12.5;
 $SPACE_WIDTH = 1.068;
-$OCTAVES = 1;
-$INCLUDE_A0_B0 = false;
-$INCLUDE_END_C = false;
 
 $COLOR_ALPHA = 1;
 
@@ -51,9 +48,10 @@ $COLOR_ALPHA = 1;
 mainThickness = $UNIT_THICKNESS;
 mainLockSize = $UNIT_LOCK_SIZE;
 mainLockOffset = $UNIT_LOCK_OFFSET;
+mainExtraPadding = $UNIT_EXTRA_PADDING;
 
 mainBlackHeight = ($BLACK_HEIGHT - $WHITE_HEIGHT);
-mainWidth = $WHITE_WIDTH * 7 + $SPACE_WIDTH * 7;
+mainWidth = $WHITE_WIDTH * 7 + $SPACE_WIDTH * 7 + mainExtraPadding;
 mainHeight = mainThickness + mainBlackHeight + $LED_STRIP_OFFSET + $LED_STRIP_HEIGHT + $LED_STRIP_OFFSET + mainThickness;
 mainDepth = $UNIT_DEPTH;
 mainOverlap = $UNIT_OVERLAP;
@@ -89,13 +87,14 @@ leftMarginThickness = mainThickness + mainLockOffset * (screwMargin ? 5 : 1);
 
 // ############################################################################################
 
-*Main(explode = false);
+Main(explode = true);
+*Main88(explode = false);
 
 *PrintFront(c1 = true);
 *PrintFront(c2c3c4c5c6 = true);
 *PrintFront(c7c8 = true);
 
-PrintBack(c1 = true);
+*PrintBack(c1 = true);
 *PrintBack(c2c3c4c5c6 = true);
 *PrintBack(c7c8 = true);
 
@@ -105,7 +104,7 @@ PrintBack(c1 = true);
 
 module PrintFront(c1 = false, c2c3c4c5c6 = false, c7c8 = false) {   
     if (c1) {
-        //rotate([90, 0, 0]) translate([-mainWidth + mainFirstOctave, 0, 0])
+        rotate([90, 0, 0]) translate([-mainWidth + mainFirstOctave, 0, 0])
         difference() {
             MainFront();
             
@@ -207,13 +206,44 @@ module PrintConnector() {
 
 // ############################################################################################
 
-module Main(explode = false) {
+module Main(explode = false) {   
     if (!explode) {
         MainFront();
         MainBack();
     } else {
         translate([0, -5, 0]) MainFront();
         translate([0, 5, 0]) MainBack();
+    }    
+}
+
+module Main88(explode = false) {
+    space = explode ? 7 : 0.01;
+    
+    union() {
+        translate([0, mainDepth + space, mainHeight]) rotate([-180, 0, 0]) {
+            PrintBack(c1 = true);
+        }
+
+        translate([mainOverlap, mainDepth + space, mainHeight]) rotate([-180, 0, 0]) {
+            translate([mainFirstOctave, 0, 0]) PrintBack(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth, 0, 0]) PrintBack(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 2, 0, 0]) PrintBack(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 3, 0, 0]) PrintBack(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 4, 0, 0]) PrintBack(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 5, 0, 0]) PrintBack(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 6, 0, 0]) PrintBack(c7c8 = true);
+        }    
+        
+        translate([0, -space, 0]) rotate([-90, 0, 0]) {
+            PrintFront(c1 = true);
+            translate([mainFirstOctave, 0, 0]) PrintFront(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth, 0, 0]) PrintFront(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 2, 0, 0]) PrintFront(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 3, 0, 0]) PrintFront(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 4, 0, 0]) PrintFront(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 5, 0, 0]) PrintFront(c2c3c4c5c6 = true);
+            translate([mainFirstOctave + mainWidth * 6, 0, 0]) PrintFront(c7c8 = true);
+        }    
     }    
 }
 
@@ -247,7 +277,7 @@ module BlockMainFront() {
                 cube([mainWidth - mainThickness * 2, mainDepth - mainThickness, mainThickness]);
                     
             translate([mainThickness / 2, 0, 0]) ScrewHolder();    
-            translate([mainWidth / 2 - screwHolderSize - mainThickness / 2, 0, 0]) ScrewHolder();    
+            translate([mainWidth / 2 - screwHolderSize - mainThickness / 2 + mainExtraPadding / 2, 0, 0]) ScrewHolder();    
             translate([mainWidth - screwHolderSize - mainThickness / 2, 0, 0]) ScrewHolder();        
         }
         
@@ -319,7 +349,7 @@ module BlockUnitPiano(thickness = 0) {
     color("white")
     
     translate([0, mainDepth - $WHITE_LENGTH / 2, -$WHITE_HEIGHT]) 
-        Piano(thickness = thickness, includeSolidSpace = true);
+        Piano(thickness = thickness, extraPadding = mainExtraPadding, includeSolidSpace = true);
 }
 
 module BlockScrew(back = false, topHolder = true) {
@@ -334,7 +364,7 @@ module BlockScrew(back = false, topHolder = true) {
                 ScrewHole();
         }
 
-        translate([mainWidth / 2 - screwHolderSize / 2 - mainThickness / 2, 0, screwHolePosition]) 
+        translate([mainWidth / 2 - screwHolderSize / 2 - mainThickness / 2 + mainExtraPadding / 2, 0, screwHolePosition]) 
             ScrewHole();
         
         translate([mainWidth - screwHolderSize / 2 - mainThickness / 2, 0, screwHolePosition]) 
