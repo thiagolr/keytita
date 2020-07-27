@@ -6,7 +6,7 @@
  *
  */
 
-include <Piano.scad>;
+include <Piano/Piano.scad>;
 
 $UNIT_THICKNESS = 1.2;
 $UNIT_LOCK_SIZE = 3;
