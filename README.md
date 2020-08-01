@@ -5,7 +5,7 @@ KeyTita
 
 This project allows you to learn a song note by note on the piano, by lighting up appropriate LED lights that correspond to each individual key on the piano.
 
-### Features
+### Modes
 
 - <b>Learn</b>: the piano will show which note should be played and then it will wait for you
 - <b>Listen</b>: the piano will play the song and you will watch which notes it is playing
@@ -13,11 +13,17 @@ This project allows you to learn a song note by note on the piano, by lighting u
 
 ### How It Works
 
-The main unit is composed by an Arduino Leonardo and an USB-Host Shield. The piano is connected to the USB-Host Shield and a PC or mobile running [Synthesia](https://synthesiagame.com/) is connected to the Arduino Leonardo.
+The main unit is composed by an Arduino Leonardo and an USB-Host Shield. The piano is connected to the USB-Host Shield and a PC or mobile device running [Synthesia](https://synthesiagame.com/) is connected to the Arduino Leonardo.
 
-Synthesia shows any MIDI song as falling notes, then the Arduino Leonardo board receive this information and light up the appropriate LED. When you press a piano key, this information is sent back to Synthesia.
+[Synthesia](https://synthesiagame.com/) shows any MIDI song as falling notes, then the Arduino Leonardo board receives this information and lights up the appropriate LED. When you press a piano key, this information is sent back to Synthesia.
 
 An android application is available to setup the key colors and effects.
+
+### Android Application
+
+The application allows you to select the key colors and the brightness. There are some predefined colors and sequences/effects, but it is also possible to set custom colors.
+
+The application is automatically launched and connected, every time you plug the USB cable between your phone/tablet and the Arduino Leonardo.
 
 ### Materials and Tools
 

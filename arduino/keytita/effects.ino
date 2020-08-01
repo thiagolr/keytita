@@ -14,70 +14,29 @@
  limitations under the License.
  */
 
-// NEW IDEA: color by note
-// NEW IDEA: color by octave
-// NEW IDEA: rainbow by octave
-
-// static single color
-void colorSingle(CRGB color) {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = color;
-    }
-}
-
 // static random color
-void colorRandom() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = pickRandomColor();
-    }
+CRGB colorRandom() {
+    return pickRandomColor();
 }
 
 // complete static rainbow
-void rainbowCompleteStatic() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = pickWheelColor((i * 256 / NUM_LEDS) & 255);
-    }
+CRGB rainbowCompleteStatic(unsigned int i) {
+    return pickWheelColor((i * 256 / NUM_LEDS) & 255);
 }
 
 // complete moving rainbow colors
-int rainbowCompleteMovingIndex = 0;
-void rainbowCompleteMoving() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = pickWheelColor(((i * 256 / NUM_LEDS) + rainbowCompleteMovingIndex) & 255);
-    }
-    rainbowCompleteMovingIndex++;
+CRGB rainbowCompleteMoving(unsigned int i) {
+    return pickWheelColor(((i * 256 / NUM_LEDS) + movingIndex) & 255);
 }
 
 // single color shifting rainbow
-int rainbowSingleColorShiftingIndex = 0;
-void rainbowSingleColorShifting() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = pickWheelColor(rainbowSingleColorShiftingIndex & 255);
-    }
-    rainbowSingleColorShiftingIndex++;
+CRGB rainbowSingleColorShifting() {
+    return pickWheelColor(movingIndex & 255);
 }
 
 // gradual moving rainbow colors
-int rainbowGradualMovingIndex = 0;
-void rainbowGradualMoving() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = pickWheelColor((i + rainbowGradualMovingIndex) & 255);
-    }
-    rainbowGradualMovingIndex++;
-}
-
-// rainbow note
-void rainbowNote() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = pickRainbowColor(i % 7);
-    }
-}
-
-// rainbow octave
-void rainbowOctave() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        colors[i] = pickRainbowColor(i / 7);
-    }
+CRGB rainbowGradualMoving(unsigned int i) {
+    return pickWheelColor((i + movingIndex) & 255);    
 }
 
 // ###################################################################
@@ -103,7 +62,7 @@ CRGB pickRandomColor() {
 }
 
 // pick a rainbow color
-CRGB pickWheelColor(uint8_t pos) {
+CRGB pickWheelColor(long pos) {
     pos = 255 - pos;
     if (pos < 85) {
         return CRGB(255 - pos * 3, 0, pos * 3);
@@ -117,7 +76,7 @@ CRGB pickWheelColor(uint8_t pos) {
 }
 
 // pick a note color
-CRGB pickRainbowColor(int index) {
+CRGB pickRainbowColor(byte index) {
     switch (index) {
     case 0:
         return CRGB(0xFF, 0, 0);

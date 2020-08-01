@@ -21,6 +21,24 @@
 #include <usbh_midi.h>
 #include <usbhub.h>
 
+#define DEBUG
+
+#ifdef DEBUG
+    #define PRINT(x) Serial.print(x)
+    #define PRINTLN(x) Serial.println(x)
+    #define PRINTNOTE(x, y, z, w) printNote(x, y, z, w)
+    #ifdef VERBOSE    
+        #define PRINTNOTE_VERBOSE(x, y, z, w) printNote(x, y, z, w)
+    #else
+        #define PRINTNOTE_VERBOSE(x, y, z, w)
+    #endif 
+#else
+    #define PRINT(x)
+    #define PRINTLN(x)
+    #define PRINTNOTE(x, y, z, w)
+    #define PRINTNOTE_VERBOSE(x, y, z, w)
+#endif
+
 // ###################################################################################################################################
 // ###################################################################################################################################
 
@@ -28,49 +46,45 @@
 #define TYPE_COLOR 1
 #define TYPE_SPEED 2
 #define TYPE_BRIGHTNESS 3
+#define TYPE_DEMO 4
 
 #define TYPE_RANDOM_COLOR 11
 #define TYPE_RAINBOW_FULL_FIXED 12
 #define TYPE_RAINBOW_FULL_MOVING 13
 #define TYPE_RAINBOW_SINGLE_SHIFTING 14
 #define TYPE_RAINBOW_GRADUAL_MOVING 15
-#define TYPE_RAINBOW_NOTE 16
-#define TYPE_RAINBOW_OCTAVE 17
 
-#define DEFAULT_BRIGHTNESS 39
-#define DEFAULT_SPEED 50
+#define DEFAULT_BRIGHTNESS 10
+#define DEFAULT_SPEED 100
 
-char btData[80];
-int btIndex = -1;
+char btData[20];
+byte btIndex = 0;
 
 bool btDemo = false;
-int btType = 0;
-int btBrightness = 0;
+byte btType = 0;
 int btVelocity = DEFAULT_SPEED;
-int btColorRed = 0;
-int btColorGreen = 0;
-int btColorBlue = 0;
+byte btColorRed = 0;
+byte btColorGreen = 0;
+byte btColorBlue = 0;
+int movingIndex = 0;
 
 // ###################################################################################################################################
 // ###################################################################################################################################
 
 #define PIN_LED 2
-#define NUM_LEDS 9
+#define NUM_LEDS 172
+#define NUM_KEYS 88
+
+const byte mapping[NUM_KEYS] = { 0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,169,171 };
+byte channels[NUM_KEYS];
 
 CRGB leds[NUM_LEDS];
-CRGB colors[NUM_LEDS];
-
-int matrixWhite[12] = { 0, 8, 1, 8, 2, 5, 8, 4, 8, 3, 8, 6 };
-int matrixBlack[12] = { 8, 0, 8, 1, 8, 8, 5, 8, 4, 8, 3, 8 };
-
-CRGB COLOR_BLACK = CRGB::Cyan;
-CRGB COLOR_WHITE = CRGB::DarkRed;
 
 // ###################################################################################################################################
 // ###################################################################################################################################
 
-#define MIDI_LIGHT_CHANNEL 16
 #define MIDI_THRU_CHANNEL 15
+#define MIDI_LIGHT_CHANNEL 16
 
 USB Usb;
 USBMIDI_CREATE_DEFAULT_INSTANCE();
@@ -92,17 +106,17 @@ void setup() {
         delay(500);
     }
 
-    Serial.println("### Initializing LEDs...");
-    FastLED.addLeds<WS2811, PIN_LED, RGB>(leds, NUM_LEDS);
+    PRINTLN("LED");
+    FastLED.addLeds<WS2812B, PIN_LED, GRB>(leds, NUM_LEDS);
     FastLED.setBrightness(DEFAULT_BRIGHTNESS);
     FastLED.show();
 
-    Serial.println("### Initializing MIDI...");
+    PRINTLN("MIDI");
     MIDI_Synthesia.setHandleNoteOn(handleSynthesiaNoteOn);
     MIDI_Synthesia.setHandleNoteOff(handleSynthesiaNoteOff);
     MIDI_Synthesia.begin(MIDI_CHANNEL_OMNI);
     
-    Serial.println("### Initializing USB...");
+    PRINTLN("USB");
     while (Usb.Init() == -1) {
         digitalWrite(LED_BUILTIN, HIGH); 
         delay(1000);
@@ -112,6 +126,15 @@ void setup() {
     
     delay(200);
     digitalWrite(LED_BUILTIN, HIGH); 
+
+    for (int i = 0; i < NUM_KEYS; i++) {
+        channels[i] = 0;
+    }
+
+    btType = TYPE_DEMO;
+    btDemo = true;
+
+    PRINTLN("READY");
 }
 
 void loop() {
@@ -125,19 +148,18 @@ void loop() {
     while (Serial.available() > 0) {
         char data = Serial.read();
 
-        btIndex++;
         btData[btIndex] = data;
+        btIndex++;
     }
 
-    if (btIndex >= 0 && btData[btIndex] == '#') {
-        btData[btIndex] = '\0';
-        btIndex = -1;
+    if (btIndex > 0 && btData[btIndex - 1] == '#') {
+        btData[btIndex - 1] = '\0';
+        btIndex = 0;
       
         char * data;
         data = strtok(btData, ",");
         int type = atoi(data);
 
-        Serial.print("T:");
         Serial.println(type);
 
         switch (type) {
@@ -159,11 +181,11 @@ void loop() {
                 break;            
             case TYPE_BRIGHTNESS:
                 data = strtok(NULL, ",");
-                btBrightness = atoi(data);
-                FastLED.setBrightness(btBrightness);
+                FastLED.setBrightness(atoi(data));
                 break;
             default:
                 btType = type;
+                movingIndex = 0;
                 break;          
         }
 
@@ -178,47 +200,19 @@ void loop() {
 // ###################################################################################################################################
 // ###################################################################################################################################
 
-void handleLedDemo() {
-    switch (btType) {
-        case TYPE_CLEAR:
-            colorSingle(CRGB::Black);
-            break;   
-        case TYPE_COLOR:
-            colorSingle(CRGB(btColorRed, btColorGreen, btColorBlue));
-            break;              
-        case TYPE_BRIGHTNESS:            
-            break;
-        case TYPE_SPEED:            
-            break;            
-        case TYPE_RANDOM_COLOR:
-            colorRandom();
-            break;  
-        case TYPE_RAINBOW_FULL_FIXED:
-            rainbowCompleteStatic();
-            break;   
-        case TYPE_RAINBOW_FULL_MOVING:
-            rainbowCompleteMoving();
-            break;   
-        case TYPE_RAINBOW_SINGLE_SHIFTING:
-            rainbowSingleColorShifting();
-            break;   
-        case TYPE_RAINBOW_GRADUAL_MOVING:
-            rainbowGradualMoving();
-            break;
-        case TYPE_RAINBOW_NOTE:
-            rainbowNote();
-            break;
-        case TYPE_RAINBOW_OCTAVE:
-            rainbowOctave();
-            break;                        
-    }
-    
-    showAllLeds();
-    delay(btVelocity);
-
-    if (btType == TYPE_CLEAR || btType == TYPE_BRIGHTNESS) {
+void handleLedDemo() {  
+    if (btType == TYPE_CLEAR) {
         btDemo = false;
     }
+    
+    for (int i = 0; i < NUM_LEDS; i++) {
+        leds[i] = getLed(i);
+    }
+
+    FastLED.show();
+
+    movingIndex++;
+    delay(btVelocity);
 }
 
 void handleUsb() {
@@ -231,7 +225,8 @@ void handleUsb() {
         buffer[2] = 0;
     
         size = MIDI_Piano.RecvData(buffer);
-        if (size > 0) {
+        
+        if (size > 0) {          
             if (buffer[0] >= 128 && buffer[0] <= 143) {
                 handlePianoNoteOff(buffer[0] - 127, buffer[1], buffer[2]);
             } else if (buffer[0] >= 144 && buffer[0] <= 159) {
@@ -243,21 +238,19 @@ void handleUsb() {
             } else if (buffer[0] == 254) {
                 // active sensing
             } else {
-                Serial.print("Unhandled status byte: ");
-                Serial.println(buffer[0]);
+                PRINT("Unhandled status byte: ");
+                PRINT(buffer[0]);
             }  
         }
     } while (size > 0);
 }
 
-void handleSynthesiaNoteOn(byte channel, byte note, byte velocity) {
-    Serial.println("note on");
-    
+void handleSynthesiaNoteOn(byte channel, byte note, byte velocity) {    
     if (channel == MIDI_THRU_CHANNEL) {
         return;      
     }
   
-    printNote("NOTE ON  RECV SYNTHESIA", channel, note, velocity);
+    PRINTNOTE("RCV SYN ON ", channel, note, velocity);
 
     if (channel == MIDI_LIGHT_CHANNEL) {       
         handleLed(true, channel, note);    
@@ -268,7 +261,7 @@ void handleSynthesiaNoteOn(byte channel, byte note, byte velocity) {
         buffer[2] = velocity;
         MIDI_Piano.SendData(buffer);
         
-        printNote("NOTE ON  SEND PIANO    ", buffer[0] - 143, buffer[1], buffer[2]);
+        PRINTNOTE_VERBOSE("SND PIA ON ", buffer[0] - 143, buffer[1], buffer[2]);
     }
 }
 
@@ -277,7 +270,7 @@ void handleSynthesiaNoteOff(byte channel, byte note, byte velocity) {
         return;      
     }
 
-    printNote("NOTE OFF RECV SYNTHESIA", channel, note, velocity);
+    PRINTNOTE("RCV SYN OFF", channel, note, velocity);
 
     if (channel == MIDI_LIGHT_CHANNEL) {
         handleLed(false, channel, note);
@@ -288,53 +281,83 @@ void handleSynthesiaNoteOff(byte channel, byte note, byte velocity) {
         buffer[2] = 0;
         MIDI_Piano.SendData(buffer);
 
-        printNote("NOTE OFF SEND PIANO    ", buffer[0] - 127, buffer[1], buffer[2]);
+        PRINTNOTE_VERBOSE("SND PIA OFF", buffer[0] - 127, buffer[1], buffer[2]);
     }
 }
 
 void handlePianoNoteOn(byte channel, byte note, byte velocity) {
     handleLed(true, channel, note);  
     
-    printNote("NOTE ON  RECV PIANO    ", channel, note, velocity);                    
-    printNote("NOTE ON  SEND SYNTHESIA", MIDI_THRU_CHANNEL, note, velocity);     
+    PRINTNOTE_VERBOSE("RCV PIA ON ", channel, note, velocity);                    
+    PRINTNOTE("SND SYN ON ", MIDI_THRU_CHANNEL, note, velocity);     
     MIDI_Synthesia.sendNoteOn(note, velocity, MIDI_THRU_CHANNEL);
 }
 
 void handlePianoNoteOff(byte channel, byte note, byte velocity) {
     handleLed(false, channel, note);
 
-    printNote("NOTE OFF RECV PIANO    ", channel, note, 0);
-    printNote("NOTE OFF SEND SYNTHESIA", MIDI_THRU_CHANNEL, note, 0);
+    PRINTNOTE_VERBOSE("RCV PIA OFF", channel, note, 0);
+    PRINTNOTE("SND SYN OFF", MIDI_THRU_CHANNEL, note, 0);
     MIDI_Synthesia.sendNoteOff(note, 0, MIDI_THRU_CHANNEL);
 }
 
 void handleLed(bool enable, byte channel, byte note) {
     if (btDemo) {
         btDemo = false;
-        colorSingle(CRGB::Black);
-        showAllLeds();
+        disableLeds();
     } 
 
     if (enable) {
-        printNote("LED ON                 ", channel, note, 0);
+        PRINTNOTE_VERBOSE("SND LED ON ", channel, note, 0);
     } else {
-        printNote("LED OFF                ", channel, note, 0);
+        PRINTNOTE_VERBOSE("SND LED OFF", channel, note, 0);
     }
 
-    int led = (note - 24) % 12;
-    if (led == 1 || led == 3 || led == 6 || led == 8 || led == 10) {
-        leds[matrixBlack[led]] = enable ? COLOR_BLACK : CRGB::Black;
-        //leds[8] = enable ? CRGB::Blue : CRGB::Black;
+    byte index = note - 21;
+    byte led = mapping[index];
+    if (enable) {
+        if (channels[index] != MIDI_LIGHT_CHANNEL) {
+            channels[index] = channel;
+            leds[led] = getLed(led);
+        }
     } else {
-        leds[matrixWhite[led]] = enable ? COLOR_WHITE : CRGB::Black;
+        if (channels[index] == channel) {
+            channels[index] = 0;    
+            leds[led] = CRGB::Black;      
+        }
     }
-    
     FastLED.show();
 }
 
-void showAllLeds() {
+CRGB getLed(byte pos) {
+    switch (btType) {
+        case TYPE_CLEAR:
+            return CRGB::Black;
+        case TYPE_COLOR:
+            return CRGB(btColorRed, btColorGreen, btColorBlue);  
+        case TYPE_DEMO:
+            if (btDemo) {
+                return rainbowCompleteMoving(pos);    
+            } else {
+                return rainbowCompleteStatic(pos);
+            }
+        case TYPE_RANDOM_COLOR:
+            return colorRandom();
+        case TYPE_RAINBOW_FULL_FIXED:
+            return rainbowCompleteStatic(pos);
+        case TYPE_RAINBOW_FULL_MOVING:
+            return rainbowCompleteMoving(pos);
+        case TYPE_RAINBOW_SINGLE_SHIFTING:
+            return rainbowSingleColorShifting();
+        case TYPE_RAINBOW_GRADUAL_MOVING:
+            return rainbowGradualMoving(pos);   
+    }
+    return CRGB::Black;
+}
+
+void disableLeds() {
     for (int i = 0; i < NUM_LEDS; i++) {
-        leds[i] = colors[i];
+        leds[i] = CRGB::Black;
     }
     FastLED.show();
 }
@@ -343,15 +366,15 @@ void showAllLeds() {
 // ###################################################################################################################################
 
 void printNote(String type, byte channel, byte note, byte velocity) {
-    /*Serial.print("[");
-    Serial.print(type);
-    Serial.print(channel < 10 ? "]  #0" : "]  #");
-    Serial.print(channel);
-    Serial.print("  note=");
-    Serial.print(note);
+    PRINT("[");
+    PRINT(type);
+    PRINT(channel < 10 ? "]  #0" : "]  #");
+    PRINT(channel);
+    PRINT("  n=");
+    PRINT(note);
     if (velocity > 0) {
-      Serial.print("  velocity=");
-      Serial.print(velocity);
+      PRINT("  v=");
+      PRINT(velocity);
     }
-    Serial.println("");*/
+    PRINTLN("");
 }

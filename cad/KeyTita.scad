@@ -89,6 +89,7 @@ leftMarginThickness = mainThickness + mainLockOffset * (screwMargin ? 5 : 1);
 
 Main(explode = true);
 *Main88(explode = false);
+*Box();
 
 *PrintFront(c1 = true);
 *PrintFront(c2c3c4c5c6 = true);
@@ -261,6 +262,16 @@ module MainBack(topHolder = true) {
         BlockScrew(back = true, topHolder = topHolder);
     }
 } 
+
+module Box() {
+    import("KeyTita_Printer_BoxCase_Base.stl", convexity=3);
+    
+    rotate([180,0,0]) {
+        translate([0, 0, -35]) import("KeyTita_Printer_BoxCase_LidTop.stl", convexity=3);
+    
+        translate([0, 0, -14]) import("KeyTita_Printer_BoxCase_LidMid.stl", convexity=3);
+    }
+}
     
 // ############################################################################################
 
