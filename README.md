@@ -51,4 +51,4 @@ The application allows you to select the key colors and the brightness. There ar
 
 The application is automatically launched and connected, every time you plug the USB cable between your phone/tablet and the Arduino Leonardo.
 
-<img src="/media/screenshot1.png?raw=true" width="200">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/media/screenshot2.png?raw=true" width="200">
+<img src="/media/screenshot1.png?raw=true" width="200">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/media/screenshot2.png?raw=true" width="200">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/media/screenshot3.png?raw=true" width="200">
