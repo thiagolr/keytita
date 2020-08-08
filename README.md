@@ -19,12 +19,6 @@ The main unit is composed by an Arduino Leonardo and an USB-Host Shield. The pia
 
 An android application is available to setup the key colors and effects.
 
-### Android Application
-
-The application allows you to select the key colors and the brightness. There are some predefined colors and sequences/effects, but it is also possible to set custom colors.
-
-The application is automatically launched and connected, every time you plug the USB cable between your phone/tablet and the Arduino Leonardo.
-
 ### Materials and Tools
 
 - Arduino Leonardo
@@ -43,10 +37,18 @@ A 1000 uF capacitor was added across the + and – terminals from the power supp
 
 A [LED support](https://www.thingiverse.com/thing:4555365) was designed using OpenSCAD in order to hold the LED strip, it is fully parametric and can be easily adjusted to other pianos or keyboards.
 
+<img src="/media/keytita_ledsupport.png?raw=true">
+
 ### Box Case
 
 The [box case](https://github.com/zygmuntw/3D-Printed-Case-for-Arduino) holding the Arduino Leonardo and the USB-Host Shield was based on the work of [Zygmunt Wojcik](https://github.com/zygmuntw). It was modified to fit the USB-Host Shield connected above the Arduino Leonardo board.
 
-### Screenshots
+<img src="/media/keytita_boxcase.png?raw=true">
+
+### Android Application
+
+The application allows you to select the key colors and the brightness. There are some predefined colors and sequences/effects, but it is also possible to set custom colors.
+
+The application is automatically launched and connected, every time you plug the USB cable between your phone/tablet and the Arduino Leonardo.
 
 <img src="/media/screenshot1.png?raw=true" width="200">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/media/screenshot2.png?raw=true" width="200">
