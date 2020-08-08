@@ -21,7 +21,7 @@
 #include <usbh_midi.h>
 #include <usbhub.h>
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
     #define PRINT(x) Serial.print(x)
@@ -99,12 +99,12 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
 
     Serial.begin(115200);
-    while (!Serial) {
-        digitalWrite(LED_BUILTIN, HIGH); 
-        delay(500);
-        digitalWrite(LED_BUILTIN, LOW); 
-        delay(500);
-    }
+    //while (!Serial) {
+    //    digitalWrite(LED_BUILTIN, HIGH); 
+    //    delay(500);
+    //    digitalWrite(LED_BUILTIN, LOW); 
+    //    delay(500);
+    //}
 
     PRINTLN("LED");
     FastLED.addLeds<WS2812B, PIN_LED, GRB>(leds, NUM_LEDS);
@@ -160,7 +160,7 @@ void loop() {
         data = strtok(btData, ",");
         int type = atoi(data);
 
-        Serial.println(type);
+        PRINTLN(type);
 
         switch (type) {
             case TYPE_CLEAR:

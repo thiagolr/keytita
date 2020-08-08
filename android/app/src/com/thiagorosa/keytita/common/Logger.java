@@ -22,12 +22,6 @@ public class Logger {
 
     private static final String TAG = "[KEYTITA]";
 
-    public static void BT(String text) {
-        if (Constants.DEBUG_LOG_BLUETOOTH) {
-            Log.d(TAG, "[BT] " + text);
-        }
-    }
-
     public static void EFFECT(String text) {
         if (Constants.DEBUG_LOG_EFFECT) {
             Log.d(TAG, "[EF] " + text);

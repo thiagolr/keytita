@@ -35,21 +35,6 @@ public class FragmentMain extends CustomFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main, null);
 
-        CardView mSelectDevice = (CardView) view.findViewById(R.id.select_device);
-        mSelectDevice.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = new FragmentConnection();
-                FragmentTransaction transactionControl = getFragmentManager().beginTransaction();
-                transactionControl.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);
-                transactionControl.replace(R.id.fragment, fragment, "fragment");
-                transactionControl.addToBackStack(null);
-                transactionControl.commitAllowingStateLoss();
-
-                update(R.string.app_title, true);
-            }
-        });
-
         CardView mSequenceCreate = (CardView) view.findViewById(R.id.setup);
         mSequenceCreate.setOnClickListener(new OnClickListener() {
             @Override

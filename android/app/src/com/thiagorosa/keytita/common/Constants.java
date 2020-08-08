@@ -24,7 +24,6 @@ public class Constants {
     public static final int TOTAL_NOTES = 49;
     public static final int TOTAL_NOTES_BY_OCTAVE = 7;
 
-    public static boolean DEBUG_LOG_BLUETOOTH = true;
     public static boolean DEBUG_LOG_EFFECT = true;
     public static boolean DEBUG_LOG_SERIAL = true;
     public static boolean DEBUG_LOG_USB = true;

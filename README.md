@@ -37,18 +37,16 @@ The application is automatically launched and connected, every time you plug the
 
 ### Electronics
 
-A 1000 uF capacitor was adde across the + and – terminals from the power supply to buffer sudden changes in the current drawn by the LED strip. A 470 ohm resistor was added to the LED strip data line to reduce the noise.
+A 1000 uF capacitor was added across the + and – terminals from the power supply to buffer sudden changes in the current drawn by the LED strip. A 470 ohm resistor was added to the LED strip data line to reduce the noise.
 
 ### LED Support
 
-A [LED support](https://www.thingiverse.com/thing:4548263) was designed using OpenSCAD in order to hold the LED strip, it is fully parametric and can be easily adjusted to other pianos or keyboards.
+A [LED support](https://www.thingiverse.com/thing:4555365) was designed using OpenSCAD in order to hold the LED strip, it is fully parametric and can be easily adjusted to other pianos or keyboards.
 
 ### Box Case
 
 The [box case](https://github.com/zygmuntw/3D-Printed-Case-for-Arduino) holding the Arduino Leonardo and the USB-Host Shield was based on the work of [Zygmunt Wojcik](https://github.com/zygmuntw). It was modified to fit the USB-Host Shield connected above the Arduino Leonardo board.
 
 ### Screenshots
-
-- TBD
 
 <img src="/media/screenshot1.png?raw=true" width="200">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/media/screenshot2.png?raw=true" width="200">

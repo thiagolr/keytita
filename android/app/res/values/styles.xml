@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  Copyright (c) 2015 Thiago Lopes Rosa
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) 2020 Thiago Lopes Rosa
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -26,18 +27,6 @@
         <item name="colorAccent">@color/theme_accent</item>
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:seekBarStyle">@style/SeekBarTheme</item>
-    </style>
-
-    <!-- ***************************************************************************************** -->
-    <!-- ***************************************************************************************** -->
-
-
-    <!-- TEXT -->
-    <style name="BaseText" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/theme_text</item>
-        <item name="android:textSize">@dimen/text_normal</item>
     </style>
 
     <!-- IMAGE -->
@@ -77,27 +66,6 @@
         <item name="android:background">@color/theme_primary</item>
     </style>
 
-    <!-- LIST -->
-    <style name="BaseList">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:cacheColorHint">@android:color/transparent</item>
-        <item name="android:choiceMode">singleChoice</item>
-        <item name="android:dividerHeight">1dp</item>
-        <item name="android:listSelector">@drawable/list_item</item>
-        <item name="android:overScrollMode">never</item>
-        <item name="android:scrollbarFadeDuration">0</item>
-        <item name="android:requiresFadingEdge">none</item>
-        <item name="android:fadingEdge">none</item>
-        <item name="android:divider">@color/theme_list_divider</item>
-        <item name="android:fadeScrollbars">false</item>
-        <item name="android:scrollbars">vertical</item>
-        <item name="android:scrollbarSize">@dimen/list_scrollbar_width</item>
-        <item name="android:scrollbarStyle">outsideOverlay</item>
-        <item name="android:scrollbarThumbVertical">@color/theme_secondary</item>
-    </style>
-
     <!-- CARDVIEW -->
     <style name="BaseCardView">
         <item name="android:layout_width">@dimen/button_width</item>
@@ -109,16 +77,6 @@
         <item name="cardBackgroundColor">@color/theme_primary</item>
         <item name="cardCornerRadius">2dp</item>
         <item name="cardElevation">3dp</item>
-    </style>
-
-    <!-- PROGRESS -->
-    <style name="BaseProgress">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:indeterminate">true</item>
-        <item name="android:layout_centerInParent">true</item>
-        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate</item>
-        <item name="android:indeterminateDuration">1000</item>
     </style>
 
     <style name="BaseToolbar" parent="ThemeOverlay.AppCompat">

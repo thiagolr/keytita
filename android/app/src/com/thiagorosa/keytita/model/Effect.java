@@ -18,7 +18,6 @@ package com.thiagorosa.keytita.model;
 
 import android.graphics.Color;
 
-import com.thiagorosa.keytita.manager.BluetoothManager;
 import com.thiagorosa.keytita.manager.USBManager;
 
 public class Effect {

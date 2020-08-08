@@ -35,7 +35,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.thiagorosa.keytita.manager.BluetoothManager;
 import com.thiagorosa.keytita.manager.PreferencesManager;
 import com.thiagorosa.keytita.manager.USBManager;
 
@@ -60,13 +59,9 @@ public class ActivityMain extends AppCompatActivity {
         }
 
         if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            } else {
                 View decorView = getWindow().getDecorView();
                 int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
                 decorView.setSystemUiVisibility(uiOptions);
-            }
         }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -105,26 +100,6 @@ public class ActivityMain extends AppCompatActivity {
             transaction.replace(R.id.fragment, fragment, "fragment");
             transaction.addToBackStack(null);
             transaction.commitAllowingStateLoss();
-
-            if (!TextUtils.isEmpty(PreferencesManager.getInstance().getDeviceMAC())) {
-                Fragment fragmentControl = new FragmentControl();
-                FragmentTransaction transactionControl = getSupportFragmentManager().beginTransaction();
-                transactionControl.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);
-                transactionControl.replace(R.id.fragment, fragmentControl, "fragment");
-                transactionControl.addToBackStack(null);
-                transactionControl.commitAllowingStateLoss();
-
-                Bundle args = new Bundle();
-                args.putString(FragmentConnection.EXTRA_MAC, PreferencesManager.getInstance().getDeviceMAC());
-
-                Fragment fragmentDevice = new FragmentConnection();
-                fragmentDevice.setArguments(args);
-                FragmentTransaction transactionDevice = getSupportFragmentManager().beginTransaction();
-                transactionDevice.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_right);
-                transactionDevice.replace(R.id.fragment, fragmentDevice, "fragment");
-                transactionDevice.addToBackStack(null);
-                transactionDevice.commitAllowingStateLoss();
-            }
         }
     }
 
@@ -139,7 +114,6 @@ public class ActivityMain extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        BluetoothManager.getInstance().disconnect();
         USBManager.getInstance().close();
     }
 
@@ -150,7 +124,7 @@ public class ActivityMain extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             try {
                 getSupportFragmentManager().popBackStack();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             invalidateOptionsMenu();
         }
@@ -164,7 +138,7 @@ public class ActivityMain extends AppCompatActivity {
         if (fm.getBackStackEntryCount() > 1) {
             try {
                 getSupportFragmentManager().popBackStack();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             finish();
@@ -185,7 +159,7 @@ public class ActivityMain extends AppCompatActivity {
     public void refreshConnection() {
         if (getSupportActionBar() != null) {
             String status = "";
-            if (BluetoothManager.getInstance().isConnected() || USBManager.getInstance().isConnected()) {
+            if (USBManager.getInstance().isConnected()) {
                 status = getText(R.string.device_connected).toString();
             } else {
                 status = getText(R.string.device_not_connected).toString();

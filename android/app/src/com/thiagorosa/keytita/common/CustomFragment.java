@@ -24,7 +24,6 @@ import androidx.fragment.app.Fragment;
 
 import com.thiagorosa.keytita.ActivityMain;
 import com.thiagorosa.keytita.R;
-import com.thiagorosa.keytita.manager.BluetoothManager;
 import com.thiagorosa.keytita.manager.USBManager;
 
 public abstract class CustomFragment extends Fragment {
@@ -53,7 +52,7 @@ public abstract class CustomFragment extends Fragment {
         String connection = getText(R.string.device_not_connected).toString();
 
         String devices = "";
-        if (BluetoothManager.getInstance().isConnected() || USBManager.getInstance().isConnected()) {
+        if (USBManager.getInstance().isConnected()) {
             devices = getText(R.string.device_connected).toString();
         }
 

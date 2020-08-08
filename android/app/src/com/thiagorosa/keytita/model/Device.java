@@ -18,8 +18,6 @@ package com.thiagorosa.keytita.model;
 
 import android.text.TextUtils;
 
-import com.thiagorosa.keytita.common.Constants;
-
 public class Device {
 
     public enum Status {

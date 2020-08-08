@@ -28,13 +28,11 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import android.view.View;
 
 import com.thiagorosa.keytita.ActivityMain;
 import com.thiagorosa.keytita.common.Constants;
 import com.thiagorosa.keytita.common.Logger;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -250,18 +248,17 @@ public class USBManager {
             if (mConnection != null) {
                 mConnection.claimInterface(mInterface, true);
 
-                mConnection.controlTransfer(0x21, RQSID_SET_CONTROL_LINE_STATE, 0x1, 0, null, 0, 0);
+                int result = mConnection.controlTransfer(0x21, RQSID_SET_CONTROL_LINE_STATE, 0x1, 0, null, 0, 0);
+                Logger.USB("controlTransfer(RQSID_SET_CONTROL_LINE_STATE): " + result);
 
-                // baud rate = 9600, 8 data bit, 1 stop bit
-                byte[] settings = new byte[]{(byte) 0x80, 0x25, 0x00, 0x00, 0x00, 0x00, 0x08};
-                //byte[] settings = getLineEncoding(115200);
-                int result = mConnection.controlTransfer(0x21, RQSID_SET_LINE_CODING, 0, 0, settings, settings.length, 0);
+                byte[] settings = getLineEncoding(115200);
+                result = mConnection.controlTransfer(0x21, RQSID_SET_LINE_CODING, 0, 0, settings, settings.length, 0);
                 Logger.USB("controlTransfer(RQSID_SET_LINE_CODING): " + result);
 
                 isConnected = true;
                 mActivity.refreshConnection();
 
-                new Thread(new Runnable() {
+                /*new Thread(new Runnable() {
                     @Override
                     public void run() {
                         while (isConnected) {
@@ -278,67 +275,13 @@ public class USBManager {
                             }
                         }
                     }
-                }).start();
+                }).start();*/
             }
         } else {
             Logger.USB("requesting permission");
             mManager.requestPermission(mDevice, mPermissionIntent);
         }
     }
-
-    private byte[] getLineEncoding(int baudRate) {
-        final byte[] lineEncodingRequest = {(byte) 0x80, 0x25, 0x00, 0x00, 0x00, 0x00, 0x08};
-        //Get the least significant byte of baudRate,
-        //and put it in first byte of the array being sent
-        lineEncodingRequest[0] = (byte) (baudRate & 0xFF);
-
-        //Get the 2nd byte of baudRate,
-        //and put it in second byte of the array being sent
-        lineEncodingRequest[1] = (byte) ((baudRate >> 8) & 0xFF);
-
-        //ibid, for 3rd byte (my guess, because you need at least 3 bytes
-        //to encode your 115200+ settings)
-        lineEncodingRequest[2] = (byte) ((baudRate >> 16) & 0xFF);
-
-        return lineEncodingRequest;
-
-    }
-
-    /*******************************************************************************************
-     *******************************************************************************************/
-
-    View.OnClickListener buttonSendOnClickListener =
-            new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-
-                    if (mDevice != null) {
-
-                       /* String tOut = textOut.getText().toString();
-                        byte[] bytesOut = tOut.getBytes(); //convert String to byte[]
-                        int usbResult = usbDeviceConnection.bulkTransfer(
-                                endpointOut, bytesOut, bytesOut.length, 0);*/
-
-                    } else {
-                       /* Toast.makeText(MainActivity.this,
-                                "deviceFound == null",
-                                Toast.LENGTH_LONG).show();*/
-                    }
-
-
-                                    /*
-                byte[] bytesHello = new byte[]{(byte) 'H', 'e', 'l', 'l',
-                        'o', ' ', 'f', 'r', 'o', 'm', ' ', 'A', 'n', 'd', 'r',
-                        'o', 'i', 'd'};
-                usbResult = mConnection.bulkTransfer(mEndpointOut,
-                        bytesHello, bytesHello.length, 0);
-
-                Log.d("thiago", "bulkTransfer: " + usbResult);*/
-
-
-                }
-            };
 
     public void write(int type) {
         write(type + "#");
@@ -352,23 +295,25 @@ public class USBManager {
         write(type + "," + red + "," + green + "," + blue + "#");
     }
 
+    private byte[] getLineEncoding(int baudRate) {
+        final byte[] lineEncodingRequest = {(byte) 0x80, 0x25, 0x00, 0x00, 0x00, 0x00, 0x08};
+        lineEncodingRequest[0] = (byte) (baudRate & 0xFF);
+        lineEncodingRequest[1] = (byte) ((baudRate >> 8) & 0xFF);
+        lineEncodingRequest[2] = (byte) ((baudRate >> 16) & 0xFF);
+        return lineEncodingRequest;
+    }
+
     private void write(String data) {
         try {
             if (isConnected) {
-                Logger.BT("WRITE: " + data);
+                Logger.USB("WRITE: " + data);
 
                 byte[] dataBytes = data.getBytes();
-                /*for (int b = 0; b < dataBytes.length; b++) {
-                    mOutputStream.write(dataBytes[b]);
-                    Thread.sleep(100);
-                }*/
-
                 int result = mConnection.bulkTransfer(mEndpointOut, dataBytes, dataBytes.length, 5);
-                Logger.BT("WRITE result: " + result);
-
+                Logger.USB("WRITE result: " + result);
             }
         } catch (Exception e) {
-            Logger.BT("ERROR: " + e.getMessage());
+            Logger.USB("ERROR: " + e.getMessage());
         }
     }
 

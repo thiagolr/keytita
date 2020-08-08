@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   Copyright (c) 2020 Thiago Lopes Rosa
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,31 +22,14 @@
 
     <!-- DEVICES -->
     <string name="device_title">Devices</string>
-    <string name="device_search">Search devices</string>
-    <string name="device_status_unsupported">Bluetooth is not supported on this device!</string>
-    <string name="device_status_disabled">Bluetooth is not enabled!</string>
-    <string name="device_status_connecting">Connecting to device…</string>
-    <string name="device_status_failed">Failed to connect…</string>
-    <string name="device_status_connected">Bluetooth device connected!</string>
-    <string name="device_status_disconnected">Bluetooth device disconnected!</string>
-    <string name="device_connecting" />
     <string name="device_connected">CONNECTED</string>
     <string name="device_not_connected">Not connected</string>
-    <string name="device_disconnect">Disconnect</string>
-    <string name="device_new">NEW</string>
 
     <!-- SETUP -->
     <string name="setup_title">Control</string>
-    <string name="create_save">Save</string>
     <string name="create_clear">Clear</string>
-    <string name="create_undo">Undo</string>
     <string name="create_reset_colors">Reset colors</string>
-    <string name="create_brightness_min">Minimum brightness</string>
-    <string name="create_brightness_max">Maximum brightness</string>
-    <string name="create_sequence_saved">Sequence saved!</string>
     <string name="create_milliseconds">ms</string>
-    <string name="create_leds">leds</string>
-    <string name="create_repeat">x</string>
     <string name="create_percentage">%</string>
     <string name="create_add">+</string>
     <string name="create_effect_none">no color/effect selected</string>
