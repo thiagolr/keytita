@@ -41,7 +41,7 @@ A [LED support](https://www.thingiverse.com/thing:4555365) was designed using Op
 
 ### Box Case
 
-The [box case](https://github.com/zygmuntw/3D-Printed-Case-for-Arduino) holding the Arduino Leonardo and the USB-Host Shield was based on the work of [Zygmunt Wojcik](https://github.com/zygmuntw). It was modified to fit the USB-Host Shield connected above the Arduino Leonardo board.
+The [box case](https://github.com/zygmuntw/3D-Printed-Case-for-Arduino) holding the Arduino Leonardo and the USB-Host Shield was based on the work of [Zygmunt Wojcik](https://github.com/zygmuntw). It was [modified](https://www.thingiverse.com/thing:4555365) to fit the USB-Host Shield connected above the Arduino Leonardo board.
 
 <img src="/media/keytita_boxcase.png?raw=true">
 
